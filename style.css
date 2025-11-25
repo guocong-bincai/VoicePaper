@@ -200,15 +200,15 @@ body {
 /* 未朗读的文字稍微变淡，制造景深感 */
 /* 规则：容器内有高亮时，所有非高亮、非高亮容器的元素变模糊 */
 .article-body:has(.highlight) > *:not(.highlight):not(.highlight-container) {
-    opacity: 0.4; /* 稍微再淡一点，对比更强 */
-    filter: blur(1.5px); /* 模糊度稍微增加一点 */
+    opacity: 0.6; /* 提高可见度 */
+    filter: blur(0.8px); /* 降低模糊度 */
     transition: all 0.5s ease;
 }
 
 /* 鼠标悬停时暂时取消模糊，方便用户查看其他内容 */
 .article-body:has(.highlight):hover > *:not(.highlight):not(.highlight-container) {
-    opacity: 0.8;
-    filter: blur(0.5px);
+    opacity: 0.9;
+    filter: blur(0); /* 悬停时完全清晰 */
 }
 
 /* 底部悬浮播放器 - 毛玻璃 */
