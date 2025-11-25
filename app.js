@@ -131,47 +131,51 @@ class VoicePaper {
         // 但为了保持兼容性，我们可以留空或者转发
     }
 
-    // 在内容中高亮文本 - 支持多段落高亮
+    // 在内容中高亮文本 - 终极匹配算法
     highlightTextInContent(text) {
-        // 移除之前的高亮、指示器和容器标记
         this.removeHighlight();
         this.removeCurrentIndicator();
         
-        // 移除容器的高亮标记
         const containers = this.articleContent.querySelectorAll('.highlight-container');
         containers.forEach(c => c.classList.remove('highlight-container'));
 
-        // 清理文本...
-        let cleanText = text.trim()
-            .replace(/\s+/g, ' ')
-            .replace(/\*\*(.+?)\*\*/g, '$1')
-            .replace(/\*(.+?)\*/g, '$1')
-            .replace(/`(.+?)`/g, '$1')
-            .replace(/\[(.+?)\]\(.+?\)/g, '$1')
-            .replace(/#{1,6}\s+/g, '')
-            .replace(/【\d+】/g, '')
-            .replace(/\s*[-–—]\s*/g, ' ');
+        // 1. 预处理目标文本：提取核心内容（只保留汉字、字母、数字）
+        // 这样可以忽略音标 []、标点、Markdown符号等所有干扰
+        const cleanTarget = text.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '').toLowerCase();
         
-        if (cleanText.length < 3) return;
+        if (cleanTarget.length < 5) return;
 
-        // 获取所有段落...
         const paragraphs = Array.from(this.articleContent.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote, div'));
         
         const matches = [];
 
         paragraphs.forEach((para, index) => {
-            if (!para.textContent.trim() || para.querySelector('p, h1, h2, h3, h4, h5, h6')) return;
+            // 跳过包含子块级元素的容器，只关注最底层的文本节点容器
+            if (para.querySelector('p, h1, h2, h3, h4, h5, h6, li')) return;
             
-            const paraText = para.textContent.trim().replace(/\s+/g, ' ');
+            const paraText = para.textContent || "";
+            // 2. 同样的规则处理段落文本
+            const cleanPara = paraText.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '').toLowerCase();
             
-            if (cleanText.includes(paraText) && paraText.length > 5) {
-                matches.push({ element: para, index: index, score: paraText.length / cleanText.length });
-            } else if (paraText.includes(cleanText)) {
-                matches.push({ element: para, index: index, score: cleanText.length / paraText.length });
-            } else {
-                const prefix = cleanText.substring(0, 20);
-                const suffix = cleanText.substring(cleanText.length - 20);
-                if (paraText.includes(prefix) || paraText.includes(suffix)) {
+            if (cleanPara.length < 5) return;
+
+            // 3. 核心匹配逻辑：基于纯净文本的包含关系
+            // 情况A: 段落包含目标 (段落比目标长，或者差不多)
+            if (cleanPara.includes(cleanTarget)) {
+                matches.push({ element: para, index: index, score: 1.0 });
+            }
+            // 情况B: 目标包含段落 (目标比段落长，比如音频读了一大段)
+            else if (cleanTarget.includes(cleanPara)) {
+                matches.push({ element: para, index: index, score: 1.0 });
+            }
+            // 情况C: 模糊匹配 (处理跨段落或只有部分重叠的情况)
+            else {
+                // 取目标的前20个有效字符
+                const start = cleanTarget.substring(0, 20);
+                // 取目标的后20个有效字符
+                const end = cleanTarget.substring(Math.max(0, cleanTarget.length - 20));
+                
+                if (cleanPara.includes(start) || cleanPara.includes(end)) {
                     matches.push({ element: para, index: index, score: 0.5 });
                 }
             }
@@ -179,15 +183,14 @@ class VoicePaper {
 
         if (matches.length > 0) {
             matches.sort((a, b) => a.index - b.index);
-            const bestMatches = matches.filter(m => m.score > 0.3 || matches.length === 1);
+            
+            // 过滤逻辑：如果是多重匹配，只保留得分高的，或者连续的
+            const bestMatches = matches; // 这里简化策略，只要匹配上都高亮，宁可多亮不可少亮
 
             if (bestMatches.length > 0) {
                 bestMatches.forEach((match, i) => {
                     match.element.classList.add('highlight');
                     
-                    // 关键修复：检查父元素
-                    // 如果高亮的是 li，需要给 ul/ol 加 .highlight-container
-                    // 如果父元素是直接的 article-body，不需要加
                     const parent = match.element.parentElement;
                     if (parent && parent !== this.articleContent) {
                         parent.classList.add('highlight-container');
@@ -201,7 +204,6 @@ class VoicePaper {
                         match.element.insertBefore(indicator, match.element.firstChild);
                     }
                 });
-
                 this.scrollToHighlight();
             }
         }
