@@ -1,4 +1,4 @@
-/* 
+/*
    VoicePaper Premium Design
    Style: Modern Editorial + Minimalist
    Author: AI Assistant
@@ -14,7 +14,7 @@
     --accent-light: #EFF6FF;
     --highlight-bg: #FEF3C7; /* 柔和的标记黄 */
     --border-color: #E5E5E5;
-    
+
     /* 尺寸变量 */
     --max-width: 760px; /* 最佳阅读宽度 */
     --player-height: 88px;
@@ -67,17 +67,27 @@ body {
     letter-spacing: 1px;
 }
 
-/* 主阅读区 */
+/* 主阅读区 - 统一对齐 */
 .app-container {
     display: flex;
     justify-content: center;
     padding: 40px 20px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.reading-area {
+    width: 100%;
+    max-width: var(--max-width);
+    box-sizing: border-box;
 }
 
 .paper-content {
     width: 100%;
     max-width: var(--max-width);
     background: transparent;
+    margin: 0 auto; /* 确保居中 */
+    box-sizing: border-box;
 }
 
 .article-header-decoration {
@@ -103,31 +113,37 @@ body {
     font-family: 'Inter', sans-serif;
 }
 
-/* 文章排版 - 杂志风格 */
+/* 文章排版 - 杂志风格 - 统一对齐 */
 .article-body {
     font-family: 'Noto Serif SC', 'Georgia', serif; /* 衬线体阅读体验更好 */
     color: #2C2C2C;
+    text-align: left; /* 统一左对齐 */
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
-/* 标题样式 */
+/* 标题样式 - 统一对齐和间距 */
 .article-body h1 {
     font-family: 'Noto Serif SC', serif;
     font-size: 36px;
     line-height: 1.3;
     font-weight: 700;
-    margin: 0 0 30px 0;
+    margin: 0 0 32px 0;
     color: var(--text-primary);
     letter-spacing: -0.5px;
+    text-align: left;
 }
 
 .article-body h2 {
     font-family: 'Inter', sans-serif; /* 小标题用无衬线体，形成对比 */
     font-size: 20px;
     font-weight: 600;
-    margin: 40px 0 20px 0;
+    margin: 48px 0 24px 0;
     color: var(--accent-color);
     display: flex;
     align-items: center;
+    text-align: left;
 }
 
 .article-body h2::before {
@@ -137,31 +153,37 @@ body {
     height: 1px;
     background: var(--accent-color);
     margin-right: 10px;
+    flex-shrink: 0;
 }
 
 .article-body h3 {
     font-size: 18px;
     font-weight: 600;
-    margin: 25px 0 15px 0;
+    margin: 32px 0 20px 0;
     color: #333;
+    text-align: left;
 }
 
-/* 正文段落 */
+/* 正文段落 - 统一间距和对齐 */
 .article-body p {
     font-size: 18px;
     line-height: 1.9;
     margin-bottom: 24px;
+    margin-top: 0;
     color: #374151;
     transition: color 0.3s ease;
+    text-align: left;
+    text-indent: 0;
 }
 
 .article-body blockquote {
     border-left: 3px solid var(--accent-color);
     padding-left: 24px;
-    margin: 30px 0;
+    margin: 32px 0;
     font-style: italic;
     color: #555;
     font-size: 19px;
+    text-align: left;
 }
 
 .article-body strong {
@@ -171,29 +193,34 @@ body {
 
 .article-body ul, .article-body ol {
     margin-bottom: 24px;
-    padding-left: 20px;
+    margin-top: 0;
+    padding-left: 24px;
+    text-align: left;
 }
 
 .article-body li {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    margin-top: 0;
     font-size: 17px;
     line-height: 1.8;
+    text-align: left;
 }
 
-/* 高亮交互 - 聚焦模式 */
+/* 高亮交互 - 聚焦模式 - 统一边距 */
 .highlight {
     background-color: rgba(254, 243, 199, 0.6); /* 极淡的黄色 */
     border-radius: 8px;
     padding: 20px 24px;
-    margin: 20px -24px; /* 视觉上向外扩张 */
+    margin: 24px 0; /* 统一上下间距，不再向外扩张 */
     box-shadow: 0 4px 20px rgba(0,0,0,0.03);
     position: relative;
     transition: all 0.5s ease;
     border-left: 4px solid var(--accent-color);
+    text-align: left;
 }
 
 /* 正在朗读的文字加深 - 强制纯黑，最高优先级，包括所有后代 */
-.highlight, 
+.highlight,
 .highlight * {
     color: #000000 !important;
     opacity: 1 !important; /* 确保不透明 */
@@ -201,11 +228,12 @@ body {
     text-shadow: 0 0 1px rgba(0,0,0,0.1);
 }
 
-/* 连续高亮合并效果 - 终极修复版 */
+/* 连续高亮合并效果 - 统一间距版本 */
 
 /* 1. 基础高亮块 */
 .highlight {
     margin-bottom: 24px; /* 默认间距 */
+    margin-top: 24px; /* 统一上间距 */
     z-index: 10; /* 确保层级正常 */
 }
 
@@ -216,7 +244,7 @@ body {
     border-bottom-right-radius: 0 !important;
     padding-bottom: 15px !important;
     /* 去掉底部分割线，让视觉连贯 */
-    box-shadow: 0 4px 20px rgba(0,0,0,0.03); 
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
 }
 
 /* 3. 当它是连续高亮序列中的【中间】或【最后一个】时 */
@@ -225,7 +253,7 @@ body {
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
     padding-top: 15px !important;
-    
+
     /* 关键：用边框模拟分割线，而不是阴影，避免折叠感 */
     border-top: 1px solid rgba(0,0,0,0.03);
     box-shadow: 0 4px 20px rgba(0,0,0,0.03);
@@ -264,14 +292,14 @@ h3.highlight + p.highlight {
 /* 未朗读的文字稍微变淡，制造景深感 */
 /* 规则：移除 blur，只使用 opacity，保证绝对清晰 */
 .article-body:has(.highlight) > *:not(.highlight):not(.highlight-container) {
-    opacity: 0.5; /* 提高可见度，从 0.3 改为 0.5 */
+    opacity: 0.8; /* 提高可见度，从 0.5 改为 0.8 */
     filter: none; /* 彻底移除模糊，解决渲染问题 */
     transition: all 0.5s ease;
 }
 
 /* 容器内的非高亮元素也需要变淡 */
 .highlight-container > *:not(.highlight) {
-    opacity: 0.5; /* 提高可见度 */
+    opacity: 0.8; /* 提高可见度 */
     transition: all 0.5s ease;
 }
 
@@ -491,15 +519,15 @@ h3.highlight + p.highlight {
         bottom: 20px;
         padding: 0 15px;
     }
-    
+
     .track-info {
         display: none; /* 手机上隐藏左侧信息以节省空间 */
     }
-    
+
     .article-body h1 {
         font-size: 28px;
     }
-    
+
     .top-nav {
         padding: 15px 20px;
     }

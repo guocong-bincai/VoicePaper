@@ -69,15 +69,15 @@ type RetrieveResponse struct {
 }
 
 func main() {
-	// Read text from 1.md
-	content, err := os.ReadFile("../data/1.md")
+	// Read text from 2.md
+	content, err := os.ReadFile("../data/3.md")
 	if err != nil {
-		fmt.Printf("Error reading 1.md: %v\n", err)
+		fmt.Printf("Error reading 2.md: %v\n", err)
 		return
 	}
 	text := string(content)
 	if text == "" {
-		fmt.Println("Warning: 1.md is empty. Using default text.")
+		fmt.Println("Warning: 2.md is empty. Using default text.")
 		text = "Hello! This is a test of the MiniMax speech synthesis API. We are generating this audio asynchronously."
 	}
 

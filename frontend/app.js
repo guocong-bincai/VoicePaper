@@ -19,6 +19,7 @@ class VoicePaper {
         this.timelineData = null;
         this.markdownContent = '';
         this.currentHighlightIndex = -1;
+        this.currentHighlightParaIndex = -1; // 记录当前高亮的段落索引位置
 
         // 初始化
         this.init();
@@ -184,8 +185,26 @@ class VoicePaper {
         if (matches.length > 0) {
             matches.sort((a, b) => a.index - b.index);
             
-            // 优化过滤策略：保留得分高的，但允许一定的容错
+            // BUG修复: 当文本多次出现时，优先选择当前播放位置之后的匹配
+            // 修复策略: 如果当前已有高亮位置，优先选择后续匹配；否则选择最后一个匹配
+            // 影响范围: frontend/app.js:184-188
+            // 修复日期: 2025-11-25
             let bestMatches = matches;
+            
+            // 如果找到多个匹配，且当前已有高亮位置
+            if (matches.length > 1 && this.currentHighlightParaIndex >= 0) {
+                // 优先选择在当前高亮位置之后的匹配
+                const subsequentMatches = matches.filter(m => m.index > this.currentHighlightParaIndex);
+                if (subsequentMatches.length > 0) {
+                    bestMatches = subsequentMatches;
+                } else {
+                    // 如果没有后续匹配，选择最后一个匹配（因为音频是顺序播放的）
+                    bestMatches = [matches[matches.length - 1]];
+                }
+            } else if (matches.length > 1) {
+                // 如果当前没有高亮位置，选择最后一个匹配（音频顺序播放）
+                bestMatches = [matches[matches.length - 1]];
+            }
 
             // 4. "填补空缺" (Fill the Gap) 逻辑
             // 如果匹配了第 5 个和第 7 个段落，那么第 6 个段落很有可能也应该被高亮
@@ -214,6 +233,9 @@ class VoicePaper {
             }
 
             if (bestMatches.length > 0) {
+                // 记录当前高亮的段落索引（使用第一个匹配的索引）
+                this.currentHighlightParaIndex = bestMatches[0].index;
+                
                 bestMatches.forEach((match, i) => {
                     match.element.classList.add('highlight');
                     
@@ -241,6 +263,7 @@ class VoicePaper {
         highlights.forEach(element => {
             element.classList.remove('highlight');
         });
+        // 注意：不清除 currentHighlightParaIndex，保持上下文以便下次匹配
     }
 
     // 移除当前位置指示器
@@ -347,12 +370,19 @@ class VoicePaper {
         // 执行跳转
         this.audioPlayer.currentTime = newTime;
         console.log(`✅ 跳转后: ${this.audioPlayer.currentTime.toFixed(2)}s`);
+        
+        // 重置高亮位置，因为用户跳转了，需要重新匹配
+        this.currentHighlightParaIndex = -1;
+        this.currentHighlightIndex = -1;
     }
 
     // 跳转到指定位置
     seekTo(percentage) {
         const time = (percentage / 100) * this.audioPlayer.duration;
         this.audioPlayer.currentTime = time;
+        // 重置高亮位置，因为用户跳转了，需要重新匹配
+        this.currentHighlightParaIndex = -1;
+        this.currentHighlightIndex = -1;
     }
 
     // 更新进度
@@ -401,6 +431,7 @@ class VoicePaper {
         
         this.removeHighlight();
         this.currentHighlightIndex = -1;
+        this.currentHighlightParaIndex = -1; // 重置段落索引
         
         const statusEl = document.querySelector('.track-status');
         if (statusEl) statusEl.textContent = '播放结束';
