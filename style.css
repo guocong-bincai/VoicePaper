@@ -264,14 +264,14 @@ h3.highlight + p.highlight {
 /* 未朗读的文字稍微变淡，制造景深感 */
 /* 规则：移除 blur，只使用 opacity，保证绝对清晰 */
 .article-body:has(.highlight) > *:not(.highlight):not(.highlight-container) {
-    opacity: 0.3; /* 稍微淡一点，形成对比 */
+    opacity: 0.5; /* 提高可见度，从 0.3 改为 0.5 */
     filter: none; /* 彻底移除模糊，解决渲染问题 */
     transition: all 0.5s ease;
 }
 
 /* 容器内的非高亮元素也需要变淡 */
 .highlight-container > *:not(.highlight) {
-    opacity: 0.3;
+    opacity: 0.5; /* 提高可见度 */
     transition: all 0.5s ease;
 }
 
