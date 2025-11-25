@@ -197,14 +197,19 @@ body {
     color: #000 !important; 
 }
 
-/* 未朗读的文字样式调整 - 移除模糊，保持清晰 */
-.article-body:has(.highlight) > *:not(.highlight) {
-    opacity: 1; /* 恢复完全不透明 */
-    filter: none; /* 移除模糊 */
+/* 未朗读的文字稍微变淡，制造景深感 */
+/* 规则：容器内有高亮时，所有非高亮、非高亮容器的元素变模糊 */
+.article-body:has(.highlight) > *:not(.highlight):not(.highlight-container) {
+    opacity: 0.4; /* 稍微再淡一点，对比更强 */
+    filter: blur(1.5px); /* 模糊度稍微增加一点 */
     transition: all 0.5s ease;
 }
 
-/* 如果你想保留一点点聚焦感，可以把上面的 opacity 改为 0.8，但绝对不要用 blur */
+/* 鼠标悬停时暂时取消模糊，方便用户查看其他内容 */
+.article-body:has(.highlight):hover > *:not(.highlight):not(.highlight-container) {
+    opacity: 0.8;
+    filter: blur(0.5px);
+}
 
 /* 底部悬浮播放器 - 毛玻璃 */
 .bottom-player {

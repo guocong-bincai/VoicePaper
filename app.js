@@ -133,91 +133,66 @@ class VoicePaper {
 
     // 在内容中高亮文本 - 支持多段落高亮
     highlightTextInContent(text) {
-        // 移除之前的高亮和指示器
+        // 移除之前的高亮、指示器和容器标记
         this.removeHighlight();
         this.removeCurrentIndicator();
+        
+        // 移除容器的高亮标记
+        const containers = this.articleContent.querySelectorAll('.highlight-container');
+        containers.forEach(c => c.classList.remove('highlight-container'));
 
-        // 清理文本：去除多余空格、换行和Markdown语法
+        // 清理文本...
         let cleanText = text.trim()
-            .replace(/\s+/g, ' ')                    // 多个空格合并
-            .replace(/\*\*(.+?)\*\*/g, '$1')        // 移除粗体标记
-            .replace(/\*(.+?)\*/g, '$1')            // 移除斜体标记
-            .replace(/`(.+?)`/g, '$1')              // 移除代码标记
-            .replace(/\[(.+?)\]\(.+?\)/g, '$1')     // 移除链接
-            .replace(/#{1,6}\s+/g, '')              // 移除标题标记
-            .replace(/【\d+】/g, '')                 // 移除【1】标记
-            .replace(/\s*[-–—]\s*/g, ' ');          // 统一破折号
+            .replace(/\s+/g, ' ')
+            .replace(/\*\*(.+?)\*\*/g, '$1')
+            .replace(/\*(.+?)\*/g, '$1')
+            .replace(/`(.+?)`/g, '$1')
+            .replace(/\[(.+?)\]\(.+?\)/g, '$1')
+            .replace(/#{1,6}\s+/g, '')
+            .replace(/【\d+】/g, '')
+            .replace(/\s*[-–—]\s*/g, ' ');
         
         if (cleanText.length < 3) return;
 
-        // 获取所有段落
+        // 获取所有段落...
         const paragraphs = Array.from(this.articleContent.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote, div'));
         
-        // 存储所有匹配的段落及其匹配得分
         const matches = [];
 
-        // 遍历所有段落
         paragraphs.forEach((para, index) => {
-            // 跳过空元素和嵌套元素
             if (!para.textContent.trim() || para.querySelector('p, h1, h2, h3, h4, h5, h6')) return;
             
             const paraText = para.textContent.trim().replace(/\s+/g, ' ');
             
-            // 检查段落是否包含在目标文本中
-            // 情况1: 段落是目标文本的一部分
             if (cleanText.includes(paraText) && paraText.length > 5) {
-                matches.push({
-                    element: para,
-                    index: index,
-                    score: paraText.length / cleanText.length
-                });
-            }
-            // 情况2: 目标文本是段落的一部分
-            else if (paraText.includes(cleanText)) {
-                matches.push({
-                    element: para,
-                    index: index,
-                    score: cleanText.length / paraText.length
-                });
-            }
-            // 情况3: 部分重叠（针对跨段落的长句）
-            else {
-                // 尝试匹配前半部分
+                matches.push({ element: para, index: index, score: paraText.length / cleanText.length });
+            } else if (paraText.includes(cleanText)) {
+                matches.push({ element: para, index: index, score: cleanText.length / paraText.length });
+            } else {
                 const prefix = cleanText.substring(0, 20);
-                if (paraText.includes(prefix)) {
-                    matches.push({
-                        element: para,
-                        index: index,
-                        score: 0.5
-                    });
-                }
-                // 尝试匹配后半部分
                 const suffix = cleanText.substring(cleanText.length - 20);
-                if (paraText.includes(suffix)) {
-                    matches.push({
-                        element: para,
-                        index: index,
-                        score: 0.5
-                    });
+                if (paraText.includes(prefix) || paraText.includes(suffix)) {
+                    matches.push({ element: para, index: index, score: 0.5 });
                 }
             }
         });
 
-        // 如果找到了匹配的段落
         if (matches.length > 0) {
-            // 找出连续的段落组
-            // 例如：如果匹配了段落 5, 6, 7，那么它们应该一起高亮
             matches.sort((a, b) => a.index - b.index);
-
-            // 过滤掉得分太低的匹配，除非它是唯一匹配
             const bestMatches = matches.filter(m => m.score > 0.3 || matches.length === 1);
 
             if (bestMatches.length > 0) {
-                // 高亮所有匹配的段落
                 bestMatches.forEach((match, i) => {
                     match.element.classList.add('highlight');
                     
-                    // 只在第一个段落添加指示器
+                    // 关键修复：检查父元素
+                    // 如果高亮的是 li，需要给 ul/ol 加 .highlight-container
+                    // 如果父元素是直接的 article-body，不需要加
+                    const parent = match.element.parentElement;
+                    if (parent && parent !== this.articleContent) {
+                        parent.classList.add('highlight-container');
+                    }
+
                     if (i === 0) {
                         const indicator = document.createElement('div');
                         indicator.className = 'current-indicator';
@@ -227,10 +202,7 @@ class VoicePaper {
                     }
                 });
 
-                // 滚动到第一个高亮段落
                 this.scrollToHighlight();
-                
-                console.log('✅ 高亮了', bestMatches.length, '个段落');
             }
         }
     }
