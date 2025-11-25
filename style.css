@@ -198,17 +198,23 @@ body {
 }
 
 /* 未朗读的文字稍微变淡，制造景深感 */
-/* 规则：容器内有高亮时，所有非高亮、非高亮容器的元素变模糊 */
+/* 规则：移除 blur，只使用 opacity，保证绝对清晰 */
 .article-body:has(.highlight) > *:not(.highlight):not(.highlight-container) {
-    opacity: 0.6; /* 提高可见度 */
-    filter: blur(0.8px); /* 降低模糊度 */
+    opacity: 0.3; /* 稍微淡一点，形成对比 */
+    filter: none; /* 彻底移除模糊，解决渲染问题 */
     transition: all 0.5s ease;
 }
 
-/* 鼠标悬停时暂时取消模糊，方便用户查看其他内容 */
-.article-body:has(.highlight):hover > *:not(.highlight):not(.highlight-container) {
-    opacity: 0.9;
-    filter: blur(0); /* 悬停时完全清晰 */
+/* 容器内的非高亮元素也需要变淡 */
+.highlight-container > *:not(.highlight) {
+    opacity: 0.3;
+    transition: all 0.5s ease;
+}
+
+/* 鼠标悬停时恢复 */
+.article-body:has(.highlight):hover > *:not(.highlight):not(.highlight-container),
+.highlight-container:hover > *:not(.highlight) {
+    opacity: 0.8;
 }
 
 /* 底部悬浮播放器 - 毛玻璃 */
