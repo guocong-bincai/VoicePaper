@@ -192,14 +192,28 @@ body {
     border-left: 4px solid var(--accent-color);
 }
 
-/* 连续高亮合并效果 */
+/* 正在朗读的文字加深 - 强制纯黑，最高优先级，包括所有后代 */
+.highlight, 
+.highlight * {
+    color: #000000 !important;
+    opacity: 1 !important; /* 确保不透明 */
+    filter: none !important;
+    text-shadow: 0 0 1px rgba(0,0,0,0.1);
+}
+
+/* 连续高亮合并效果优化 */
+/* 增加基础间距，让独立的高亮块更好看 */
+.highlight {
+    margin-bottom: 24px; /* 默认下边距 */
+}
 
 /* 如果当前是高亮，且下一个兄弟也是高亮 -> 去掉底部圆角和下边距 */
 .highlight + .highlight {
-    margin-top: 0 !important;
+    margin-top: -24px !important; /* 负边距拉近 */
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
-    padding-top: 10px !important; /* 稍微减少内部间距 */
+    padding-top: 20px !important; /* 增加内部呼吸感 */
+    border-top: 1px solid rgba(0,0,0,0.05); /* 添加分割线，避免完全粘连 */
 }
 
 /* 如果当前是高亮，且上一个兄弟也是高亮 -> 去掉顶部圆角和上边距 */
@@ -207,20 +221,7 @@ body {
     margin-bottom: 0 !important;
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
-    padding-bottom: 10px !important;
-}
-
-/* 只有第一个高亮块显示指示器，app.js 已实现，这里只需确保样式正确 */
-.highlight + .highlight .current-indicator {
-    display: none !important;
-}
-
-/* 正在朗读的文字加深 - 强制纯黑，最高优先级 */
-.highlight, 
-.highlight > * {
-    opacity: 1 !important;
-    color: #000000 !important;
-    filter: none !important;
+    padding-bottom: 20px !important;
 }
 
 /* 确保容器本身不透明 */
