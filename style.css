@@ -201,27 +201,52 @@ body {
     text-shadow: 0 0 1px rgba(0,0,0,0.1);
 }
 
-/* 连续高亮合并效果优化 */
-/* 增加基础间距，让独立的高亮块更好看 */
+/* 连续高亮合并效果 - 终极修复版 */
+
+/* 1. 基础高亮块 */
 .highlight {
-    margin-bottom: 24px; /* 默认下边距 */
+    margin-bottom: 24px; /* 默认间距 */
+    z-index: 10; /* 确保层级正常 */
 }
 
-/* 如果当前是高亮，且下一个兄弟也是高亮 -> 去掉底部圆角和下边距 */
-.highlight + .highlight {
-    margin-top: -24px !important; /* 负边距拉近 */
-    border-top-left-radius: 0 !important;
-    border-top-right-radius: 0 !important;
-    padding-top: 20px !important; /* 增加内部呼吸感 */
-    border-top: 1px solid rgba(0,0,0,0.05); /* 添加分割线，避免完全粘连 */
-}
-
-/* 如果当前是高亮，且上一个兄弟也是高亮 -> 去掉顶部圆角和上边距 */
+/* 2. 当它是连续高亮序列中的【第一个】时 */
 .highlight:has(+ .highlight) {
     margin-bottom: 0 !important;
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
-    padding-bottom: 20px !important;
+    padding-bottom: 15px !important;
+    /* 去掉底部分割线，让视觉连贯 */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03); 
+}
+
+/* 3. 当它是连续高亮序列中的【中间】或【最后一个】时 */
+.highlight + .highlight {
+    margin-top: 0 !important; /* 紧贴上一块 */
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    padding-top: 15px !important;
+    
+    /* 关键：用边框模拟分割线，而不是阴影，避免折叠感 */
+    border-top: 1px solid rgba(0,0,0,0.03);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+/* 4. 特殊处理：如果上面是标题，下面是正文，增加一点层级感 */
+h1.highlight + p.highlight,
+h2.highlight + p.highlight,
+h3.highlight + p.highlight {
+    padding-top: 20px !important;
+    background-color: rgba(254, 243, 199, 0.4) !important; /* 正文稍微淡一点点，形成层级 */
+}
+
+/* 5. 左侧蓝线连接处理 */
+.highlight {
+    border-left: 4px solid var(--accent-color);
+}
+
+/* 6. 指示器只显示在第一块 */
+.highlight + .highlight .current-indicator {
+    display: none !important;
 }
 
 /* 确保容器本身不透明 */
