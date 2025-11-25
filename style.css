@@ -192,7 +192,30 @@ body {
     border-left: 4px solid var(--accent-color);
 }
 
-/* 强制高亮元素不透明，并应用颜色 */
+/* 连续高亮合并效果 */
+
+/* 如果当前是高亮，且下一个兄弟也是高亮 -> 去掉底部圆角和下边距 */
+.highlight + .highlight {
+    margin-top: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    padding-top: 10px !important; /* 稍微减少内部间距 */
+}
+
+/* 如果当前是高亮，且上一个兄弟也是高亮 -> 去掉顶部圆角和上边距 */
+.highlight:has(+ .highlight) {
+    margin-bottom: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    padding-bottom: 10px !important;
+}
+
+/* 只有第一个高亮块显示指示器，app.js 已实现，这里只需确保样式正确 */
+.highlight + .highlight .current-indicator {
+    display: none !important;
+}
+
+/* 正在朗读的文字加深 - 强制纯黑，最高优先级 */
 .highlight, 
 .highlight > * {
     opacity: 1 !important;
