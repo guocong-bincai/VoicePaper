@@ -6,3 +6,8 @@ tmp/
 dist/
 node_modules/
 
+# User requested ignores
+.cursor/
+.deepvcode/
+*.md
+

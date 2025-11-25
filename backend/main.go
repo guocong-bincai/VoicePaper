@@ -70,7 +70,7 @@ type RetrieveResponse struct {
 
 func main() {
 	// Read text from 1.md
-	content, err := os.ReadFile("1.md")
+	content, err := os.ReadFile("../data/1.md")
 	if err != nil {
 		fmt.Printf("Error reading 1.md: %v\n", err)
 		return
@@ -127,7 +127,7 @@ func main() {
 	fmt.Printf("Download URL: %s\n", downloadURL)
 
 	// Download file
-	tarFilename := "output.tar"
+	tarFilename := "../data/output.tar"
 	err = downloadFile(downloadURL, tarFilename)
 	if err != nil {
 		fmt.Printf("Error downloading file: %v\n", err)
@@ -136,7 +136,7 @@ func main() {
 	fmt.Printf("Downloaded archive to %s. Extracting...\n", tarFilename)
 
 	// Extract tar
-	mp3File, err := extractTar(tarFilename, ".")
+	mp3File, err := extractTar(tarFilename, "../data")
 	if err != nil {
 		fmt.Printf("Error extracting tar: %v\n", err)
 		return
@@ -145,7 +145,7 @@ func main() {
 	if mp3File != "" {
 		fmt.Printf("Audio extracted to: %s\n", mp3File)
 		// Rename to output.mp3
-		err := os.Rename(mp3File, "output.mp3")
+		err := os.Rename(mp3File, "../data/output.mp3")
 		if err != nil {
 			fmt.Printf("Error renaming file: %v\n", err)
 		} else {

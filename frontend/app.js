@@ -46,7 +46,7 @@ class VoicePaper {
     // 加载时间轴数据
     async loadTimelineData() {
         try {
-            const response = await fetch('1925118537643336511_202511251800_337964855271998_337969297908224/content-1925118537643336511_202511251800_337964855271998_337969297908224.titles');
+            const response = await fetch('../data/1925118537643336511_202511251800_337964855271998_337969297908224/content-1925118537643336511_202511251800_337964855271998_337969297908224.titles');
             this.timelineData = await response.json();
             console.log('✅ 时间轴数据加载成功:', this.timelineData.length, '条');
         } catch (error) {
@@ -58,7 +58,7 @@ class VoicePaper {
     // 加载Markdown内容
     async loadMarkdownContent() {
         try {
-            const response = await fetch('1.md');
+            const response = await fetch('../data/1.md');
             this.markdownContent = await response.text();
             console.log('✅ Markdown内容加载成功');
         } catch (error) {
