@@ -184,8 +184,34 @@ class VoicePaper {
         if (matches.length > 0) {
             matches.sort((a, b) => a.index - b.index);
             
-            // 过滤逻辑：如果是多重匹配，只保留得分高的，或者连续的
-            const bestMatches = matches; // 这里简化策略，只要匹配上都高亮，宁可多亮不可少亮
+            // 优化过滤策略：保留得分高的，但允许一定的容错
+            let bestMatches = matches;
+
+            // 4. "填补空缺" (Fill the Gap) 逻辑
+            // 如果匹配了第 5 个和第 7 个段落，那么第 6 个段落很有可能也应该被高亮
+            if (bestMatches.length >= 2) {
+                const firstIndex = bestMatches[0].index;
+                const lastIndex = bestMatches[bestMatches.length - 1].index;
+                
+                // 如果跨度不太大（比如中间只隔了不到 5 个段落），就填补中间的
+                if (lastIndex - firstIndex < 5) {
+                    for (let i = firstIndex + 1; i < lastIndex; i++) {
+                        // 检查这个索引是否已经在匹配列表中
+                        const exists = bestMatches.find(m => m.index === i);
+                        if (!exists) {
+                            // 获取对应的元素
+                            const gapPara = paragraphs[i];
+                            // 只有当它不是空元素时才添加
+                            if (gapPara && gapPara.textContent.trim().length > 0) {
+                                console.log('🔧 自动填补中间段落:', i);
+                                bestMatches.push({ element: gapPara, index: i, score: 0.5 });
+                            }
+                        }
+                    }
+                    // 重新排序
+                    bestMatches.sort((a, b) => a.index - b.index);
+                }
+            }
 
             if (bestMatches.length > 0) {
                 bestMatches.forEach((match, i) => {

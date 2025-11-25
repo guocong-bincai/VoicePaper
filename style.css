@@ -192,23 +192,24 @@ body {
     border-left: 4px solid var(--accent-color);
 }
 
-/* 正在朗读的文字加深 - 强制纯黑，最高优先级 */
+/* 强制高亮元素不透明，并应用颜色 */
 .highlight, 
-.highlight p, 
-.highlight h1, 
-.highlight h2, 
-.highlight h3, 
-.highlight li, 
-.highlight strong,
-.highlight span {
+.highlight > * {
+    opacity: 1 !important;
     color: #000000 !important;
-    opacity: 1 !important; /* 确保不透明 */
-    text-shadow: 0 0 1px rgba(0,0,0,0.1); /* 微弱的描边增加清晰度 */
+    filter: none !important;
 }
 
-/* 确保容器也不会变淡 */
+/* 确保容器本身不透明 */
 .highlight-container {
     opacity: 1 !important;
+    filter: none !important;
+}
+
+/* 修复：如果容器内有高亮，非高亮元素变淡 */
+.highlight-container > *:not(.highlight) {
+    opacity: 0.3;
+    transition: all 0.5s ease;
 }
 
 /* 未朗读的文字稍微变淡，制造景深感 */
