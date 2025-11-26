@@ -21,6 +21,8 @@ class VoicePaper {
         this.currentHighlightIndex = -1;
         this.currentHighlightParaIndex = -1; // 记录当前高亮的段落索引位置
         this.isUserInteracting = false; // 标记用户是否正在交互进度条
+        this.currentArticle = null; // 当前文章配置
+        this.isPlayRequestPending = false; // BUG修复: 防止播放请求冲突
 
         // 初始化
         this.init();
@@ -28,27 +30,75 @@ class VoicePaper {
 
     async init() {
         try {
-            // 加载数据
+            // 1. 加载文章清单
+            await this.loadManifest();
+
+            // 2. 加载数据
             await this.loadTimelineData();
             await this.loadMarkdownContent();
 
-            // 渲染Markdown
+            // 3. 渲染Markdown
             this.renderMarkdown();
 
-            // 绑定事件
+            // 4. 绑定事件
             this.bindEvents();
 
             console.log('✅ VoicePaper初始化成功');
         } catch (error) {
             console.error('❌ 初始化失败:', error);
-            alert('加载失败,请检查文件路径');
+            alert('加载失败: ' + error.message);
+        }
+    }
+
+    // 加载文章清单并确定当前文章
+    async loadManifest() {
+        try {
+            const response = await fetch('../data/manifest.json');
+            const manifest = await response.json();
+
+            // 获取URL参数中的id
+            const urlParams = new URLSearchParams(window.location.search);
+            const articleId = urlParams.get('id');
+
+            if (articleId) {
+                this.currentArticle = manifest.articles.find(a => a.id === articleId);
+            }
+
+            // 如果没有指定ID或找不到，默认使用第一个
+            if (!this.currentArticle && manifest.articles.length > 0) {
+                this.currentArticle = manifest.articles[0];
+            }
+
+            if (!this.currentArticle) {
+                throw new Error('未找到任何文章配置');
+            }
+
+            console.log('📚 当前加载文章:', this.currentArticle.title);
+
+            // 更新页面标题
+            document.title = `${this.currentArticle.title} | VoicePaper`;
+
+            // 更新播放器标题
+            const trackTitle = document.querySelector('.track-title');
+            if (trackTitle) trackTitle.textContent = this.currentArticle.title;
+
+            // 更新音频源 (添加时间戳防止缓存问题)
+            const audioSrc = `../data/${this.currentArticle.audio}`;
+            console.log('🎵 设置音频源:', audioSrc);
+            this.audioPlayer.src = audioSrc;
+            this.audioPlayer.preload = 'auto';
+            this.audioPlayer.load(); // 显式加载
+
+        } catch (error) {
+            console.error('❌ 清单加载失败:', error);
+            throw error;
         }
     }
 
     // 加载时间轴数据
     async loadTimelineData() {
         try {
-            const response = await fetch('../data/1925118537643336511_202511251800_337964855271998_337969297908224/content-1925118537643336511_202511251800_337964855271998_337969297908224.titles');
+            const response = await fetch(`../data/${this.currentArticle.titles}`);
             this.timelineData = await response.json();
             console.log('✅ 时间轴数据加载成功:', this.timelineData.length, '条');
         } catch (error) {
@@ -60,7 +110,7 @@ class VoicePaper {
     // 加载Markdown内容
     async loadMarkdownContent() {
         try {
-            const response = await fetch('../data/1.md');
+            const response = await fetch(`../data/${this.currentArticle.markdown}`);
             this.markdownContent = await response.text();
             console.log('✅ Markdown内容加载成功');
         } catch (error) {
@@ -134,7 +184,7 @@ class VoicePaper {
     }
 
     // 在内容中高亮文本 - 终极匹配算法
-    highlightTextInContent(text) {
+    highlightTextInContent(text, segmentIndex, totalSegments) {
         this.removeHighlight();
         this.removeCurrentIndicator();
 
@@ -186,25 +236,37 @@ class VoicePaper {
         if (matches.length > 0) {
             matches.sort((a, b) => a.index - b.index);
 
-            // BUG修复: 当文本多次出现时，优先选择当前播放位置之后的匹配
-            // 修复策略: 如果当前已有高亮位置，优先选择后续匹配；否则选择最后一个匹配
-            // 影响范围: frontend/app.js:184-188
-            // 修复日期: 2025-11-25
             let bestMatches = matches;
 
-            // 如果找到多个匹配，且当前已有高亮位置
-            if (matches.length > 1 && this.currentHighlightParaIndex >= 0) {
-                // 优先选择在当前高亮位置之后的匹配
-                const subsequentMatches = matches.filter(m => m.index > this.currentHighlightParaIndex);
-                if (subsequentMatches.length > 0) {
-                    bestMatches = subsequentMatches;
-                } else {
-                    // 如果没有后续匹配，选择最后一个匹配（因为音频是顺序播放的）
-                    bestMatches = [matches[matches.length - 1]];
+            // 策略优化：多重匹配消歧
+            if (matches.length > 1) {
+                // 1. 优先使用上下文 (Sequential Playback)
+                // 如果当前有高亮段落，且存在位于其后的匹配项，优先考虑这些
+                if (this.currentHighlightParaIndex >= 0) {
+                    const subsequentMatches = matches.filter(m => m.index > this.currentHighlightParaIndex);
+                    if (subsequentMatches.length > 0) {
+                        // 找到最近的下一个匹配
+                        bestMatches = [subsequentMatches[0]];
+                    } else {
+                        // 如果没有后续匹配，可能循环了或者逻辑异常，回退到比率匹配
+                        bestMatches = matches; // 暂时重置，让下面的逻辑处理
+                    }
                 }
-            } else if (matches.length > 1) {
-                // 如果当前没有高亮位置，选择最后一个匹配（音频顺序播放）
-                bestMatches = [matches[matches.length - 1]];
+
+                // 2. 使用位置比率 (Ratio Heuristic) - 适用于 Seek 和无上下文情况
+                // 如果上面的逻辑没有锁定唯一匹配，或者我们处于 Seek 模式（currentHighlightParaIndex == -1）
+                if (bestMatches.length > 1 && typeof segmentIndex === 'number' && typeof totalSegments === 'number') {
+                    const audioProgress = segmentIndex / totalSegments;
+                    const totalParas = paragraphs.length;
+
+                    // 找到与当前音频进度最接近的段落位置
+                    // 计算每个匹配项的相对位置比率，取差值最小的
+                    bestMatches = [matches.reduce((prev, curr) => {
+                        const prevRatio = prev.index / totalParas;
+                        const currRatio = curr.index / totalParas;
+                        return (Math.abs(currRatio - audioProgress) < Math.abs(prevRatio - audioProgress)) ? curr : prev;
+                    })];
+                }
             }
 
             // 4. "填补空缺" (Fill the Gap) 逻辑
@@ -299,6 +361,30 @@ class VoicePaper {
             this.togglePlayPause();
         });
 
+        // 监听音频状态事件，确保UI与实际状态同步
+        this.audioPlayer.addEventListener('play', () => {
+            this.isPlayRequestPending = false; // BUG修复: 确保播放事件触发时重置标志位
+            this.updatePlayState(true);
+        });
+        this.audioPlayer.addEventListener('pause', () => {
+            this.isPlayRequestPending = false; // BUG修复: 确保暂停事件触发时重置标志位
+            this.updatePlayState(false);
+        });
+        this.audioPlayer.addEventListener('waiting', () => {
+            const statusEl = document.querySelector('.track-status');
+            if (statusEl) statusEl.textContent = '缓冲中...';
+        });
+        this.audioPlayer.addEventListener('playing', () => {
+            const statusEl = document.querySelector('.track-status');
+            if (statusEl) statusEl.textContent = '正在朗读...';
+        });
+        this.audioPlayer.addEventListener('error', (e) => {
+            console.error("音频播放出错:", this.audioPlayer.error);
+            const statusEl = document.querySelector('.track-status');
+            if (statusEl) statusEl.textContent = '播放出错';
+            alert('音频加载失败，请检查网络或文件是否存在');
+        });
+
         // 后退10秒
         this.rewindBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -363,32 +449,56 @@ class VoicePaper {
     }
 
     // 播放/暂停切换
-    togglePlayPause() {
-        const playIcon = this.playPauseBtn.querySelector('.play-icon');
-        const pauseIcon = this.playPauseBtn.querySelector('.pause-icon');
+    // BUG修复: 防止播放请求冲突导致的AbortError
+    // 修复策略: 添加状态标志位，确保播放请求完成前不会重复调用
+    // 影响范围: frontend/app.js:445-458
+    // 修复日期: 2025-11-25
+    async togglePlayPause() {
+        // 如果正在处理播放请求，忽略新的请求
+        if (this.isPlayRequestPending) {
+            return;
+        }
 
         if (this.audioPlayer.paused) {
-            this.audioPlayer.play();
-            // 切换图标
+            this.isPlayRequestPending = true;
+            try {
+                await this.audioPlayer.play();
+                // UI更新将由 'play'/'playing' 事件监听器处理
+            } catch (error) {
+                // AbortError是预期的，当播放请求被中断时会出现，可以安全忽略
+                if (error.name === 'AbortError') {
+                    console.log('播放请求被中断（这是正常的）');
+                } else {
+                    console.error("播放请求失败:", error);
+                    // 可以在这里处理自动播放策略限制等问题
+                }
+            } finally {
+                // 无论成功或失败，都重置标志位
+                this.isPlayRequestPending = false;
+            }
+        } else {
+            // 暂停操作不需要等待，直接执行
+            this.audioPlayer.pause();
+            // UI更新将由 'pause' 事件监听器处理
+        }
+    }
+
+    // 更新播放状态UI
+    updatePlayState(isPlaying) {
+        const playIcon = this.playPauseBtn.querySelector('.play-icon');
+        const pauseIcon = this.playPauseBtn.querySelector('.pause-icon');
+        const statusEl = document.querySelector('.track-status');
+        const iconEl = document.querySelector('.track-icon');
+
+        if (isPlaying) {
             if (playIcon) playIcon.style.display = 'none';
             if (pauseIcon) pauseIcon.style.display = 'block';
-
-            // 添加正在播放的状态样式
-            const statusEl = document.querySelector('.track-status');
             if (statusEl) statusEl.textContent = '正在朗读...';
-
-            const iconEl = document.querySelector('.track-icon');
             if (iconEl) iconEl.classList.add('playing');
         } else {
-            this.audioPlayer.pause();
-            // 切换图标
             if (playIcon) playIcon.style.display = 'block';
             if (pauseIcon) pauseIcon.style.display = 'none';
-
-            const statusEl = document.querySelector('.track-status');
-            if (statusEl) statusEl.textContent = '已暂停';
-
-            const iconEl = document.querySelector('.track-icon');
+            if (statusEl) statusEl.textContent = '点击播放'; // 暂停时显示引导文案
             if (iconEl) iconEl.classList.remove('playing');
         }
     }
@@ -476,7 +586,8 @@ class VoicePaper {
         if (segmentIndex !== -1 && segmentIndex !== this.currentHighlightIndex) {
              const segment = this.timelineData[segmentIndex];
              if (segment) {
-                 this.highlightTextInContent(segment.text);
+                 // 传递 segmentIndex 和 totalSegments 用于消歧
+                 this.highlightTextInContent(segment.text, segmentIndex, this.timelineData.length);
                  this.currentHighlightIndex = segmentIndex;
              }
         }
