@@ -20,6 +20,7 @@ class VoicePaper {
         this.markdownContent = '';
         this.currentHighlightIndex = -1;
         this.currentHighlightParaIndex = -1; // 记录当前高亮的段落索引位置
+        this.isUserInteracting = false; // 标记用户是否正在交互进度条
 
         // 初始化
         this.init();
@@ -30,13 +31,13 @@ class VoicePaper {
             // 加载数据
             await this.loadTimelineData();
             await this.loadMarkdownContent();
-            
+
             // 渲染Markdown
             this.renderMarkdown();
-            
+
             // 绑定事件
             this.bindEvents();
-            
+
             console.log('✅ VoicePaper初始化成功');
         } catch (error) {
             console.error('❌ 初始化失败:', error);
@@ -77,14 +78,14 @@ class VoicePaper {
             headerIds: false,   // 不生成header ID
             mangle: false       // 不混淆邮箱地址
         });
-        
+
         // 使用marked.js渲染Markdown
         const htmlContent = marked.parse(this.markdownContent);
-        
+
         // 处理渲染后的内容，添加段落标识
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = htmlContent;
-        
+
         // 为每个段落添加数据属性，便于后续匹配
         let textOffset = 0;
         const allNodes = tempDiv.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote');
@@ -95,9 +96,9 @@ class VoicePaper {
             node.setAttribute('data-para-index', index);
             textOffset += text.length;
         });
-        
+
         this.articleContent.innerHTML = tempDiv.innerHTML;
-        
+
         // 为每个时间段的文本添加标记
         this.wrapTextSegments();
     }
@@ -116,7 +117,7 @@ class VoicePaper {
     findCurrentSegment(currentTime) {
         // 将秒转换为毫秒
         const currentTimeMs = currentTime * 1000;
-        
+
         for (let i = 0; i < this.timelineData.length; i++) {
             const segment = this.timelineData[i];
             if (currentTimeMs >= segment.time_begin && currentTimeMs <= segment.time_end) {
@@ -136,28 +137,28 @@ class VoicePaper {
     highlightTextInContent(text) {
         this.removeHighlight();
         this.removeCurrentIndicator();
-        
+
         const containers = this.articleContent.querySelectorAll('.highlight-container');
         containers.forEach(c => c.classList.remove('highlight-container'));
 
         // 1. 预处理目标文本：提取核心内容（只保留汉字、字母、数字）
         // 这样可以忽略音标 []、标点、Markdown符号等所有干扰
         const cleanTarget = text.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '').toLowerCase();
-        
+
         if (cleanTarget.length < 5) return;
 
         const paragraphs = Array.from(this.articleContent.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li, blockquote, div'));
-        
+
         const matches = [];
 
         paragraphs.forEach((para, index) => {
             // 跳过包含子块级元素的容器，只关注最底层的文本节点容器
             if (para.querySelector('p, h1, h2, h3, h4, h5, h6, li')) return;
-            
+
             const paraText = para.textContent || "";
             // 2. 同样的规则处理段落文本
             const cleanPara = paraText.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '').toLowerCase();
-            
+
             if (cleanPara.length < 5) return;
 
             // 3. 核心匹配逻辑：基于纯净文本的包含关系
@@ -175,7 +176,7 @@ class VoicePaper {
                 const start = cleanTarget.substring(0, 20);
                 // 取目标的后20个有效字符
                 const end = cleanTarget.substring(Math.max(0, cleanTarget.length - 20));
-                
+
                 if (cleanPara.includes(start) || cleanPara.includes(end)) {
                     matches.push({ element: para, index: index, score: 0.5 });
                 }
@@ -184,13 +185,13 @@ class VoicePaper {
 
         if (matches.length > 0) {
             matches.sort((a, b) => a.index - b.index);
-            
+
             // BUG修复: 当文本多次出现时，优先选择当前播放位置之后的匹配
             // 修复策略: 如果当前已有高亮位置，优先选择后续匹配；否则选择最后一个匹配
             // 影响范围: frontend/app.js:184-188
             // 修复日期: 2025-11-25
             let bestMatches = matches;
-            
+
             // 如果找到多个匹配，且当前已有高亮位置
             if (matches.length > 1 && this.currentHighlightParaIndex >= 0) {
                 // 优先选择在当前高亮位置之后的匹配
@@ -211,7 +212,7 @@ class VoicePaper {
             if (bestMatches.length >= 2) {
                 const firstIndex = bestMatches[0].index;
                 const lastIndex = bestMatches[bestMatches.length - 1].index;
-                
+
                 // 如果跨度不太大（比如中间只隔了不到 5 个段落），就填补中间的
                 if (lastIndex - firstIndex < 5) {
                     for (let i = firstIndex + 1; i < lastIndex; i++) {
@@ -235,10 +236,10 @@ class VoicePaper {
             if (bestMatches.length > 0) {
                 // 记录当前高亮的段落索引（使用第一个匹配的索引）
                 this.currentHighlightParaIndex = bestMatches[0].index;
-                
+
                 bestMatches.forEach((match, i) => {
                     match.element.classList.add('highlight');
-                    
+
                     const parent = match.element.parentElement;
                     if (parent && parent !== this.articleContent) {
                         parent.classList.add('highlight-container');
@@ -282,7 +283,7 @@ class VoicePaper {
             const rect = highlight.getBoundingClientRect();
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const targetTop = scrollTop + rect.top - (window.innerHeight / 3); // 位于视口 1/3 处
-            
+
             window.scrollTo({
                 top: targetTop,
                 behavior: 'smooth'
@@ -293,16 +294,60 @@ class VoicePaper {
     // 绑定事件
     bindEvents() {
         // 播放/暂停按钮
-        this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
+        this.playPauseBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.togglePlayPause();
+        });
 
         // 后退10秒
-        this.rewindBtn.addEventListener('click', () => this.skip(-10));
+        this.rewindBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.skip(-10);
+        });
 
         // 前进10秒
-        this.forwardBtn.addEventListener('click', () => this.skip(10));
+        this.forwardBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.skip(10);
+        });
 
-        // 进度条拖动
-        this.progressSlider.addEventListener('input', (e) => this.seekTo(e.target.value));
+        // 进度条交互优化
+        // 1. 开始拖动/点击
+        const startInteraction = () => {
+            this.isUserInteracting = true;
+        };
+
+        // 2. 结束拖动/点击
+        const endInteraction = () => {
+            this.isUserInteracting = false;
+        };
+
+        this.progressSlider.addEventListener('mousedown', startInteraction);
+        this.progressSlider.addEventListener('touchstart', startInteraction);
+
+        this.progressSlider.addEventListener('mouseup', endInteraction);
+        this.progressSlider.addEventListener('touchend', endInteraction);
+
+        // 3. 拖动中：只更新视觉，不seek
+        this.progressSlider.addEventListener('input', (e) => {
+            const percentage = e.target.value;
+            // 更新视觉进度条
+            const progressFill = document.querySelector('.progress-fill');
+            if (progressFill) {
+                progressFill.style.width = `${percentage}%`;
+            }
+            // 更新时间显示
+            const duration = this.audioPlayer.duration;
+            if (duration > 0) {
+                const time = (percentage / 100) * duration;
+                this.currentTimeDisplay.textContent = this.formatTime(time);
+            }
+        });
+
+        // 4. 拖动结束/点击松开：执行seek
+        this.progressSlider.addEventListener('change', (e) => {
+            this.seekTo(e.target.value);
+        });
 
         // 音频时间更新
         this.audioPlayer.addEventListener('timeupdate', () => this.updateProgress());
@@ -327,11 +372,11 @@ class VoicePaper {
             // 切换图标
             if (playIcon) playIcon.style.display = 'none';
             if (pauseIcon) pauseIcon.style.display = 'block';
-            
+
             // 添加正在播放的状态样式
             const statusEl = document.querySelector('.track-status');
             if (statusEl) statusEl.textContent = '正在朗读...';
-            
+
             const iconEl = document.querySelector('.track-icon');
             if (iconEl) iconEl.classList.add('playing');
         } else {
@@ -339,10 +384,10 @@ class VoicePaper {
             // 切换图标
             if (playIcon) playIcon.style.display = 'block';
             if (pauseIcon) pauseIcon.style.display = 'none';
-            
+
             const statusEl = document.querySelector('.track-status');
             if (statusEl) statusEl.textContent = '已暂停';
-            
+
             const iconEl = document.querySelector('.track-icon');
             if (iconEl) iconEl.classList.remove('playing');
         }
@@ -351,26 +396,31 @@ class VoicePaper {
     // 跳转(前进/后退)
     skip(seconds) {
         const duration = this.audioPlayer.duration;
-        const currentTime = this.audioPlayer.currentTime;
-        
+        let currentTime = this.audioPlayer.currentTime;
+
         // 确保 duration 有效
         if (!isFinite(duration) || duration === 0) {
             console.warn('⚠️ 无法跳转：音频时长无效', duration);
             return;
         }
-        
+
+        // 确保 currentTime 有效
+        if (!isFinite(currentTime)) {
+            currentTime = 0;
+        }
+
         console.log(`⏩ 跳转前: ${currentTime.toFixed(2)}s, 目标偏移: ${seconds}s`);
-        
+
         let newTime = currentTime + seconds;
-        
+
         // 边界检查
         if (newTime < 0) newTime = 0;
         if (newTime > duration) newTime = duration;
-        
+
         // 执行跳转
         this.audioPlayer.currentTime = newTime;
         console.log(`✅ 跳转后: ${this.audioPlayer.currentTime.toFixed(2)}s`);
-        
+
         // 重置高亮位置，因为用户跳转了，需要重新匹配
         this.currentHighlightParaIndex = -1;
         this.currentHighlightIndex = -1;
@@ -378,8 +428,21 @@ class VoicePaper {
 
     // 跳转到指定位置
     seekTo(percentage) {
-        const time = (percentage / 100) * this.audioPlayer.duration;
+        const duration = this.audioPlayer.duration;
+        if (!isFinite(duration) || duration === 0) return;
+
+        const time = (percentage / 100) * duration;
         this.audioPlayer.currentTime = time;
+
+        // 更新视觉进度条（因为在拖动时 updateProgress 被暂停了）
+        const progressFill = document.querySelector('.progress-fill');
+        if (progressFill) {
+            progressFill.style.width = `${percentage}%`;
+        }
+
+        // 更新时间显示
+        this.currentTimeDisplay.textContent = this.formatTime(time);
+
         // 重置高亮位置，因为用户跳转了，需要重新匹配
         this.currentHighlightParaIndex = -1;
         this.currentHighlightIndex = -1;
@@ -387,6 +450,9 @@ class VoicePaper {
 
     // 更新进度
     updateProgress() {
+        // 如果用户正在交互，暂停自动更新进度条位置，避免冲突
+        if (this.isUserInteracting) return;
+
         const currentTime = this.audioPlayer.currentTime;
         const duration = this.audioPlayer.duration;
 
@@ -394,7 +460,7 @@ class VoicePaper {
         if (duration > 0) {
             const percentage = (currentTime / duration) * 100;
             this.progressSlider.value = percentage;
-            
+
             // 更新自定义进度条的视觉宽度
             const progressFill = document.querySelector('.progress-fill');
             if (progressFill) {
@@ -425,14 +491,14 @@ class VoicePaper {
     onPlaybackEnded() {
         const playIcon = this.playPauseBtn.querySelector('.play-icon');
         const pauseIcon = this.playPauseBtn.querySelector('.pause-icon');
-        
+
         if (playIcon) playIcon.style.display = 'block';
         if (pauseIcon) pauseIcon.style.display = 'none';
-        
+
         this.removeHighlight();
         this.currentHighlightIndex = -1;
         this.currentHighlightParaIndex = -1; // 重置段落索引
-        
+
         const statusEl = document.querySelector('.track-status');
         if (statusEl) statusEl.textContent = '播放结束';
     }
@@ -440,7 +506,7 @@ class VoicePaper {
     // 格式化时间(秒 -> MM:SS)
     formatTime(seconds) {
         if (isNaN(seconds)) return '00:00';
-        
+
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
@@ -469,4 +535,3 @@ class VoicePaper {
 document.addEventListener('DOMContentLoaded', () => {
     new VoicePaper();
 });
-

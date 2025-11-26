@@ -10,4 +10,8 @@ node_modules/
 .cursor/
 .deepvcode/
 *.md
+
+# Configuration files with secrets
+backend/etc/config.yaml
+etc/config.yaml
 *.yaml
