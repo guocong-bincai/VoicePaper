@@ -1,0 +1,40 @@
+# VoicePaper Project Rules
+
+## 1. Project Context
+- **Name**: VoicePaper
+- **Goal**: A bilingual reading and dictation application.
+- **Tech Stack**:
+  - **Backend**: Go (1.21+), Gin Web Framework, GORM, SQLite.
+  - **Frontend**: React (18+), TypeScript, Vite, Tailwind CSS, Zustand (State Management).
+
+## 2. Architectural Principles (Strict Adherence)
+- **Backend Layering**:
+  - `api/`: Only handles HTTP request parsing, validation, and response formatting. NEVER contains business logic.
+  - `service/`: Contains all business logic (e.g., calling TTS API, parsing Markdown, calculating costs).
+  - `repository/`: Only handles database operations. No business logic here.
+- **Frontend Componentization**:
+  - Separate "Smart Components" (Logic/State) from "Dumb Components" (UI only).
+  - Use Custom Hooks (`useAudioPlayer`, `useArticle`) to abstract logic from views.
+
+## 3. Critical Business Rules
+- **Cost Control (TTS API)**:
+  - NEVER call the MiniMax API automatically on startup.
+  - ALWAYS check the database (`articles` table) first.
+  - If `audio_path` exists and is valid, serve the local file.
+  - Only trigger TTS generation via an explicit API endpoint (`POST /api/v1/articles/:id/generate`) or if the record is missing.
+- **File Management**:
+  - All generated audio files must be stored in `backend/data/audio/`.
+  - Database must store the *relative path* to the audio.
+
+## 4. Coding Standards
+- **Go**:
+  - Use `context` for all I/O operations.
+  - Error handling: Wrap errors with context, do not just return `nil`.
+  - Use Struct tags for JSON and GORM.
+- **TypeScript**:
+  - No `any` types. Define interfaces in `src/types/`.
+  - Use Functional Components with Hooks.
+
+## 5. Future Proofing (Dictation Module)
+- When designing the `Article` model, ensure it supports a one-to-many relationship with `Sentences`.
+- `Sentences` table should store: `text`, `start_time` (ms), `end_time` (ms) for precise seeking and dictation validation.
