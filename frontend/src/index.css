@@ -407,6 +407,7 @@ h3.highlight + p.highlight {
   display: flex;
   align-items: center;
   gap: 15px;
+  flex: 1; /* 占据左侧空间，与右侧平衡 */
   min-width: 180px;
 }
 
@@ -445,7 +446,7 @@ h3.highlight + p.highlight {
 
 /* 播放器中间控制区 */
 .player-controls-wrapper {
-  flex: 1;
+  flex: 0 0 auto; /* 不伸缩，保持内容宽度 */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -555,6 +556,7 @@ h3.highlight + p.highlight {
 
 /* 播放器右侧 */
 .player-extra {
+  flex: 1; /* 占据右侧空间，与左侧平衡，实现中间居中 */
   min-width: 40px;
   display: flex;
   justify-content: flex-end;
