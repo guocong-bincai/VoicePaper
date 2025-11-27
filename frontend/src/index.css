@@ -123,6 +123,11 @@ body {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+  /* 确保高亮框可以突破边界 */
+  overflow: visible;
+  /* 确保没有额外的padding影响对齐 */
+  padding-left: 0;
+  padding-right: 0;
 }
 
 /* 标题样式 - 统一对齐和间距 */
@@ -172,10 +177,34 @@ body {
   line-height: 1.9;
   margin-bottom: 24px;
   margin-top: 0;
+  margin-left: 0;
+  margin-right: 0;
   color: #374151;
   transition: color 0.3s ease;
   text-align: left;
   text-indent: 0;
+  padding-left: 0;
+  padding-right: 0;
+  /* 确保段落内的元素可以突破边界 */
+  overflow: visible;
+}
+
+/* 当段落包含高亮时，确保高亮框对齐 */
+.article-body p:has(.highlight),
+.article-body div:has(.highlight),
+.article-body h1:has(.highlight),
+.article-body h2:has(.highlight),
+.article-body h3:has(.highlight),
+.article-body blockquote:has(.highlight),
+.article-body li:has(.highlight) {
+  overflow: visible !important;
+  /* 移除所有padding，让高亮框与正文对齐 */
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  /* 确保高亮框不会伸出来 */
+  position: relative;
 }
 
 .article-body blockquote {
@@ -208,17 +237,42 @@ body {
   text-align: left;
 }
 
-/* 高亮交互 - 聚焦模式 - 统一边距 */
+/* 高亮交互 - 聚焦模式 - 统一边距和对齐 */
+/* 确保所有高亮框，无论包裹在什么元素中，都能正确对齐 */
+.article-body .highlight,
+.article-body p .highlight,
+.article-body div .highlight,
+.article-body h1 .highlight,
+.article-body h2 .highlight,
+.article-body h3 .highlight,
+.article-body blockquote .highlight,
+.article-body li .highlight,
 .highlight {
-  background-color: rgba(254, 243, 199, 0.6); /* 极淡的黄色 */
+  background-color: rgba(254, 243, 199, 0.85) !important; /* 提高不透明度，更清晰 */
   border-radius: 8px;
-  padding: 20px 24px;
-  margin: 24px 0; /* 统一上下间距，不再向外扩张 */
+  padding: 20px 24px !important;
+  margin-top: 24px !important;
+  margin-bottom: 24px !important;
+  
+  /* 默认无负边距 (针对 p, div 等无 padding 父元素) */
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  
   box-shadow: 0 4px 20px rgba(0,0,0,0.03);
   position: relative;
   transition: all 0.5s ease;
   border-left: 4px solid var(--accent-color);
   text-align: left;
+  z-index: 10; /* 确保层级正常 */
+  /* 确保高亮框完全清晰，不受任何父元素影响 */
+  opacity: 1 !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  /* 确保高亮框宽度与父元素一致 */
+  display: block;
+  box-sizing: border-box;
+  width: 100% !important;
 }
 
 /* 正在朗读的文字加深 - 强制纯黑，最高优先级，包括所有后代 */
@@ -230,12 +284,7 @@ body {
   text-shadow: 0 0 1px rgba(0,0,0,0.1);
 }
 
-/* 连续高亮合并效果 - 统一间距版本 */
-.highlight {
-  margin-bottom: 24px; /* 默认间距 */
-  margin-top: 24px; /* 统一上间距 */
-  z-index: 10; /* 确保层级正常 */
-}
+/* 连续高亮合并效果 - 统一间距版本（合并到上面的.highlight规则中） */
 
 /* 当它是连续高亮序列中的【第一个】时 */
 .highlight:has(+ .highlight) {
@@ -244,6 +293,9 @@ body {
   border-bottom-right-radius: 0 !important;
   padding-bottom: 15px !important;
   box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  /* 确保左右对齐 */
+  margin-left: -24px !important;
+  margin-right: -24px !important;
 }
 
 /* 当它是连续高亮序列中的【中间】或【最后一个】时 */
@@ -254,6 +306,9 @@ body {
   padding-top: 15px !important;
   border-top: 1px solid rgba(0,0,0,0.03);
   box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  /* 确保左右对齐 */
+  margin-left: -24px !important;
+  margin-right: -24px !important;
 }
 
 /* 特殊处理：如果上面是标题，下面是正文，增加一点层级感 */
@@ -274,10 +329,21 @@ h3.highlight + p.highlight {
   display: none !important;
 }
 
-/* 确保容器本身不透明 */
+/* 确保容器本身不透明，且不影响内部高亮框 */
 .highlight-container {
   opacity: 1 !important;
   filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 确保容器内的高亮框完全清晰 */
+.highlight-container .highlight {
+  opacity: 1 !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-color: rgba(254, 243, 199, 0.85) !important;
 }
 
 /* 修复：如果容器内有高亮，非高亮元素变淡 */

@@ -11,13 +11,19 @@ export const AudioPlayer: React.FC = () => {
     useEffect(() => {
         if (currentArticle && audioRef.current && currentArticle.audio_path) {
             // 直接使用本地音频文件路径（相对于 public 目录）
-            audioRef.current.src = `/${currentArticle.audio_path}`;
+            const newSrc = `/${currentArticle.audio_path}`;
+            // 只有当 src 真正改变时才重新加载，防止暂停/播放时重置
+            if (audioRef.current.src.endsWith(newSrc)) {
+                return;
+            }
+            
+            audioRef.current.src = newSrc;
             audioRef.current.load();
             if (isPlaying) {
                 audioRef.current.play().catch(e => console.error("Auto-play failed:", e));
             }
         }
-    }, [currentArticle, isPlaying]);
+    }, [currentArticle]); // 移除 isPlaying 依赖
 
     useEffect(() => {
         if (audioRef.current) {

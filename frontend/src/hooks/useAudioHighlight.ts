@@ -54,6 +54,41 @@ export const useAudioHighlight = (currentTime: number, articleContentRef: React.
     const highlights = articleContentRef.current.querySelectorAll('.highlight');
     highlights.forEach(element => {
       element.classList.remove('highlight');
+      // 清除可能的内联样式
+      (element as HTMLElement).style.marginLeft = '';
+      (element as HTMLElement).style.width = '';
+      (element as HTMLElement).style.paddingLeft = '';
+    });
+  };
+
+  // 动态修正高亮框对齐
+  const fixHighlightAlignment = (element: HTMLElement) => {
+    if (!articleContentRef.current) return;
+    
+    // 使用 requestAnimationFrame 确保在下一帧计算，获取准确的样式
+    requestAnimationFrame(() => {
+      if (!articleContentRef.current) return;
+      
+      // 先移除可能的内联样式以获取原始位置
+      element.style.marginLeft = '';
+      element.style.width = '';
+      element.style.paddingLeft = '';
+      
+      const containerRect = articleContentRef.current.getBoundingClientRect();
+      const elementRect = element.getBoundingClientRect();
+      
+      // 计算左侧偏移量
+      const leftOffset = elementRect.left - containerRect.left;
+      
+      // 如果有偏移（说明有缩进），进行修正
+      // 允许 5px 的误差，避免微小抖动
+      if (leftOffset > 5) {
+        element.style.marginLeft = `-${leftOffset}px`;
+        element.style.width = `calc(100% + ${leftOffset}px)`;
+        // 关键：增加 padding-left 以保持文字位置不变
+        // 24px 是基础 padding (从 CSS .highlight { padding: 20px 24px } 中获取)
+        element.style.paddingLeft = `${leftOffset + 24}px`;
+      }
     });
   };
 
@@ -82,7 +117,7 @@ export const useAudioHighlight = (currentTime: number, articleContentRef: React.
   };
 
   // 在内容中高亮文本
-  const highlightTextInContent = (text: string, segmentIndex: number, totalSegments: number) => {
+  const highlightTextInContent = (text: string, segmentIndex: number, totalSegments: number, segment?: TimelineSegment) => {
     if (!articleContentRef.current) {
       console.warn('⚠️ articleContentRef.current 为空');
       return;
@@ -94,9 +129,69 @@ export const useAudioHighlight = (currentTime: number, articleContentRef: React.
     const containers = articleContentRef.current.querySelectorAll('.highlight-container');
     containers.forEach(c => c.classList.remove('highlight-container'));
 
+    // **方案1：优先使用 text_begin 和 text_end 直接定位（最准确）**
+    if (segment && segment.text_begin > 0 && segment.text_end > segment.text_begin) {
+      // 获取所有文本节点
+      const walker = document.createTreeWalker(
+        articleContentRef.current,
+        NodeFilter.SHOW_TEXT,
+        null
+      );
+      
+      let charCount = 0;
+      const targetStart = segment.text_begin;
+      const targetEnd = segment.text_end;
+      const matchedElements: HTMLElement[] = [];
+      
+      let node: Node | null;
+      while ((node = walker.nextNode())) {
+        const nodeText = node.textContent || '';
+        const nodeStart = charCount;
+        const nodeEnd = charCount + nodeText.length;
+        
+        // 检查这个文本节点是否与目标范围重叠
+        if (nodeEnd > targetStart && nodeStart < targetEnd) {
+          // 找到包含这个文本节点的父元素（段落）
+          let parent = node.parentElement;
+          while (parent && parent !== articleContentRef.current) {
+            // 检查是否是块级元素
+            if (['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI', 'BLOCKQUOTE'].includes(parent.tagName)) {
+              if (!matchedElements.includes(parent)) {
+                matchedElements.push(parent);
+                parent.classList.add('highlight');
+                
+                // 添加指示器到第一个匹配的元素
+                if (matchedElements.length === 1) {
+                  const indicator = document.createElement('div');
+                  indicator.className = 'current-indicator';
+                  indicator.innerHTML = '▶';
+                  (parent as HTMLElement).style.position = 'relative';
+                  parent.insertBefore(indicator, parent.firstChild);
+                }
+                
+                // 动态修正对齐
+                fixHighlightAlignment(parent as HTMLElement);
+              }
+              break;
+            }
+            parent = parent.parentElement;
+          }
+        }
+        
+        charCount = nodeEnd;
+      }
+      
+      if (matchedElements.length > 0) {
+        scrollToHighlight();
+        return; // 成功使用字符位置定位，直接返回
+      }
+    }
+
+    // **方案2：文本匹配（作为备选方案）**
     // 预处理目标文本：提取核心内容（只保留汉字、字母、数字）
-    const cleanTarget = text.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '').toLowerCase();
-    if (cleanTarget.length < 5) {
+    const cleanTarget = text.trim().replace(/[^\u4e00-\u9fa5a-zA-Z0-9]/g, '').toLowerCase();
+    if (cleanTarget.length < 3) {  // 降低最小长度要求，从 5 改为 3
+      console.log(`⚠️ 文本太短，跳过: "${text}" (长度: ${cleanTarget.length})`);
       return;
     }
 
@@ -119,17 +214,23 @@ export const useAudioHighlight = (currentTime: number, articleContentRef: React.
 
       if (cleanPara.length < 5) return;
 
-      // 核心匹配逻辑
+      // 核心匹配逻辑 - 更宽松的匹配策略
+      // 1. 完全包含匹配（最高优先级）
       if (cleanPara.includes(cleanTarget)) {
         const matchPosition = cleanPara.indexOf(cleanTarget);
         const matchRatio = matchPosition / Math.max(cleanPara.length, 1);
         const positionScore = matchRatio > 0.5 ? 0.1 : 0;
         matches.push({ element: para, index: index, score: 1.0 + positionScore, matchPosition: matchPosition });
-      } else if (cleanTarget.includes(cleanPara)) {
+      } 
+      // 2. 目标文本包含段落（段落是目标的一部分）
+      else if (cleanTarget.includes(cleanPara)) {
         matches.push({ element: para, index: index, score: 1.0 });
-      } else {
-        const start = cleanTarget.substring(0, Math.min(30, cleanTarget.length));
-        const end = cleanTarget.substring(Math.max(0, cleanTarget.length - 30));
+      } 
+      // 3. 部分匹配：检查开头和结尾
+      else {
+        const minMatchLength = Math.max(5, Math.min(cleanTarget.length * 0.3, 20)); // 至少匹配 30% 或 5 个字符
+        const start = cleanTarget.substring(0, Math.min(minMatchLength, cleanTarget.length));
+        const end = cleanTarget.substring(Math.max(0, cleanTarget.length - minMatchLength));
         const hasStart = cleanPara.includes(start);
         const hasEnd = cleanPara.includes(end);
         
@@ -139,6 +240,14 @@ export const useAudioHighlight = (currentTime: number, articleContentRef: React.
             score = 0.8;
           }
           matches.push({ element: para, index: index, score: score });
+        }
+        // 4. 模糊匹配：检查是否有足够的共同字符
+        else {
+          const commonChars = cleanTarget.split('').filter(char => cleanPara.includes(char)).length;
+          const similarity = commonChars / Math.max(cleanTarget.length, cleanPara.length);
+          if (similarity > 0.4) {  // 如果相似度超过 40%
+            matches.push({ element: para, index: index, score: similarity * 0.6 });
+          }
         }
       }
     });
@@ -153,6 +262,11 @@ export const useAudioHighlight = (currentTime: number, articleContentRef: React.
       });
 
       let bestMatches = matches;
+      
+      // 调试信息
+      if (segmentIndex % 10 === 0) {  // 每 10 个片段打印一次，避免日志过多
+        console.log(`🔍 片段 ${segmentIndex}: 搜索 "${text.substring(0, 30)}..." 找到 ${matches.length} 个匹配`);
+      }
 
       // 策略优化：多重匹配消歧
       if (matches.length > 1) {
@@ -234,8 +348,16 @@ export const useAudioHighlight = (currentTime: number, articleContentRef: React.
             (match.element as HTMLElement).style.position = 'relative';
             match.element.insertBefore(indicator, match.element.firstChild);
           }
+          
+          // 动态修正对齐
+          fixHighlightAlignment(match.element as HTMLElement);
         });
         scrollToHighlight();
+      }
+    } else {
+      // 如果没有找到匹配，记录调试信息
+      if (segmentIndex % 20 === 0) {  // 每 20 个片段打印一次
+        console.warn(`⚠️ 片段 ${segmentIndex}: 未找到匹配文本 "${text.substring(0, 50)}..."`);
       }
     }
   };
@@ -257,8 +379,14 @@ export const useAudioHighlight = (currentTime: number, articleContentRef: React.
     if (segmentIndex !== -1 && segmentIndex !== currentHighlightIndexRef.current) {
       const segment = timelineData[segmentIndex];
       if (segment) {
-        highlightTextInContent(segment.text, segmentIndex, timelineData.length);
+        // 传递完整的 segment 对象，以便使用 text_begin/text_end
+        highlightTextInContent(segment.text, segmentIndex, timelineData.length, segment);
         currentHighlightIndexRef.current = segmentIndex;
+      }
+    } else if (segmentIndex === -1 && currentTime > 0) {
+      // 如果找不到对应的片段，可能是时间戳不匹配
+      if (Math.floor(currentTime) % 5 === 0) {  // 每 5 秒打印一次
+        console.warn(`⚠️ 时间 ${currentTime.toFixed(2)}s (${(currentTime * 1000).toFixed(0)}ms) 未找到对应片段`);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
