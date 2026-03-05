@@ -1,0 +1,101 @@
+# VoicePaper Project Rules
+
+## 1. Project Context
+- **Name**: VoicePaper
+- **Goal**: A bilingual reading and dictation application.
+- **Tech Stack**:
+  - **Backend**: Go (1.21+), Gin Web Framework, GORM, SQLite.
+  - **Frontend**: React (18+), TypeScript, Vite, Tailwind CSS, Zustand (State Management).
+
+## 2. Architectural Principles (Strict Adherence)
+- **Backend Layering**:
+  - `api/`: Only handles HTTP request parsing, validation, and response formatting. NEVER contains business logic.
+  - `service/`: Contains all business logic (e.g., calling TTS API, parsing Markdown, calculating costs).
+  - `repository/`: Only handles database operations. No business logic here.
+- **Frontend Componentization**:
+  - Separate "Smart Components" (Logic/State) from "Dumb Components" (UI only).
+  - Use Custom Hooks (`useAudioPlayer`, `useArticle`) to abstract logic from views.
+
+## 3. Critical Business Rules
+- **Cost Control (TTS API)**:
+  - NEVER call the MiniMax API automatically on startup.
+  - ALWAYS check the database (`articles` table) first.
+  - If `audio_path` exists and is valid, serve the local file.
+  - Only trigger TTS generation via an explicit API endpoint (`POST /api/v1/articles/:id/generate`) or if the record is missing.
+- **File Management**:
+  - All generated audio files must be stored in `backend/data/audio/`.
+  - Database must store the *relative path* to the audio.
+
+## 4. Coding Standards
+- **Go**:
+  - Use `context` for all I/O operations.
+  - Error handling: Wrap errors with context, do not just return `nil`.
+  - Use Struct tags for JSON and GORM.
+- **TypeScript**:
+  - No `any` types. Define interfaces in `src/types/`.
+  - Use Functional Components with Hooks.
+
+## 5. Future Proofing (Dictation Module)
+- When designing the `Article` model, ensure it supports a one-to-many relationship with `Sentences`.
+- `Sentences` table should store: `text`, `start_time` (ms), `end_time` (ms) for precise seeking and dictation validation.
+
+## 6. 🚨 CRITICAL - Deployment and Code Modification Rules (MUST FOLLOW)
+**These rules are MANDATORY and CANNOT be violated under ANY circumstances:**
+
+### 6.1 Code Modification Workflow
+1. **ALWAYS ask for permission BEFORE making any code changes**
+   - Explain what you plan to change and why
+   - Wait for explicit user approval
+   - NEVER assume the user wants changes just because they mentioned a problem
+
+2. **NEVER auto-deploy or auto-commit without explicit user instruction**
+   - User must explicitly say "deploy", "上线", "commit", or similar commands
+   - Even for bug fixes, wait for user confirmation before deploying
+   - Show the changes to the user first, let them decide when to deploy
+
+3. **For Bug Fixes:**
+   - ✅ DO: Analyze the problem, explain the root cause, show the fix
+   - ✅ DO: Ask "需要我修复这个bug吗？" and wait for response
+   - ❌ DON'T: Automatically fix and deploy without asking
+   - ❌ DON'T: Run deployment scripts without explicit user command
+
+4. **For Feature Requests:**
+   - ✅ DO: Discuss the design and implementation approach first
+   - ✅ DO: Get user approval before writing any code
+   - ❌ DON'T: Start coding immediately
+   - ❌ DON'T: Deploy new features without user testing
+
+### 6.2 Deployment Rules
+**DEPLOYMENT IS A DANGEROUS OPERATION - EXTREME CAUTION REQUIRED**
+
+- ❌ NEVER run `deploy.sh` or any deployment command without explicit user instruction
+- ❌ NEVER assume user wants to deploy just because code is ready
+- ❌ NEVER chain deployment after completing a feature - code completion ≠ deployment request
+- ❌ 代码修改完成后，绝对不要自动部署！等用户明确说"部署"或"上线"
+- ✅ ALWAYS wait for explicit commands like:
+  - "部署"
+  - "deploy"
+  - "上线"
+  - "@deploy.sh 部署"
+  
+**重要：功能开发完成后，只需告诉用户"已完成"，不要主动执行部署脚本！**
+  
+### 6.3 Communication Rules
+- When you identify a bug or issue:
+  1. Explain the problem clearly
+  2. Describe the root cause
+  3. Propose a solution
+  4. Ask: "需要我修复吗？" or "需要我实现这个功能吗？"
+  5. Wait for user response
+  
+- NEVER take action before getting user confirmation
+- User's time and production environment are precious - treat them with respect
+
+### 6.4 Violation Consequences
+If these rules are violated:
+- Production environment may be broken
+- User's business may be affected
+- Trust will be damaged
+- This is UNACCEPTABLE behavior
+
+**Remember: You are an assistant, not an autonomous agent. The user is in control, not you.**

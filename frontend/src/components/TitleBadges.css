@@ -1,0 +1,483 @@
+.title-badges {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.title-badges.loading {
+  text-align: center;
+  padding: 60px;
+  color: #999;
+  font-size: 16px;
+}
+
+.title-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  border-radius: 20px;
+  border: 2px solid rgba(102, 126, 234, 0.1);
+}
+
+.title-header h2 {
+  font-size: 32px;
+  font-weight: 900;
+  margin-bottom: 12px;
+  color: var(--text-primary, #333);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.title-header-icon {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.subtitle {
+  color: var(--text-secondary, #666);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.category-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.category-tab {
+  padding: 8px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 20px;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.category-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.category-tab:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.category-tab.active {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-color: #6366f1;
+  color: white;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+}
+
+.titles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.title-card {
+  background: white;
+  border: 3px solid;
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  gap: 20px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.title-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.title-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+}
+
+.title-card:hover::before {
+  opacity: 0.3;
+}
+
+.title-card.locked {
+  opacity: 0.5;
+  filter: grayscale(80%);
+  background: #f5f5f5;
+}
+
+.title-card.locked:hover {
+  transform: translateY(-4px);
+}
+
+.title-card.owned {
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
+}
+
+/* 不同稀有度的卡片背景色 */
+
+/* 普通称号的多种颜色变体 */
+.title-card.owned.common-teal {
+  background: linear-gradient(135deg, rgba(32, 178, 170, 0.1) 0%, rgba(64, 224, 208, 0.15) 100%);
+  box-shadow: 0 4px 20px rgba(32, 178, 170, 0.25),
+              0 0 30px rgba(64, 224, 208, 0.15);
+  animation: tealGlow 3s ease-in-out infinite;
+}
+
+.title-card.owned.common-coral {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 143, 143, 0.15) 100%);
+  box-shadow: 0 4px 20px rgba(255, 107, 107, 0.25),
+              0 0 30px rgba(255, 143, 143, 0.15);
+  animation: coralGlow 3s ease-in-out infinite;
+}
+
+.title-card.owned.common-mint {
+  background: linear-gradient(135deg, rgba(78, 205, 196, 0.1) 0%, rgba(129, 236, 236, 0.15) 100%);
+  box-shadow: 0 4px 20px rgba(78, 205, 196, 0.25),
+              0 0 30px rgba(129, 236, 236, 0.15);
+  animation: mintGlow 3s ease-in-out infinite;
+}
+
+.title-card.owned.common-brown {
+  background: linear-gradient(135deg, rgba(139, 115, 85, 0.1) 0%, rgba(180, 150, 110, 0.15) 100%);
+  box-shadow: 0 4px 20px rgba(139, 115, 85, 0.25),
+              0 0 30px rgba(180, 150, 110, 0.15);
+  animation: brownGlow 3s ease-in-out infinite;
+}
+
+.title-card.owned.common-olive {
+  background: linear-gradient(135deg, rgba(124, 179, 66, 0.1) 0%, rgba(156, 204, 101, 0.15) 100%);
+  box-shadow: 0 4px 20px rgba(124, 179, 66, 0.25),
+              0 0 30px rgba(156, 204, 101, 0.15);
+  animation: oliveGlow 3s ease-in-out infinite;
+}
+
+.title-card.owned.common-cyan {
+  background: linear-gradient(135deg, rgba(67, 233, 123, 0.1) 0%, rgba(56, 249, 215, 0.15) 100%);
+  box-shadow: 0 4px 20px rgba(67, 233, 123, 0.25),
+              0 0 30px rgba(56, 249, 215, 0.15);
+  animation: cyanGlow 3s ease-in-out infinite;
+}
+
+@keyframes tealGlow {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(32, 178, 170, 0.25), 0 0 30px rgba(64, 224, 208, 0.15);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(32, 178, 170, 0.35), 0 0 40px rgba(64, 224, 208, 0.25);
+  }
+}
+
+@keyframes coralGlow {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(255, 107, 107, 0.25), 0 0 30px rgba(255, 143, 143, 0.15);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(255, 107, 107, 0.35), 0 0 40px rgba(255, 143, 143, 0.25);
+  }
+}
+
+@keyframes mintGlow {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(78, 205, 196, 0.25), 0 0 30px rgba(129, 236, 236, 0.15);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(78, 205, 196, 0.35), 0 0 40px rgba(129, 236, 236, 0.25);
+  }
+}
+
+@keyframes brownGlow {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(139, 115, 85, 0.25), 0 0 30px rgba(180, 150, 110, 0.15);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(139, 115, 85, 0.35), 0 0 40px rgba(180, 150, 110, 0.25);
+  }
+}
+
+@keyframes oliveGlow {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(124, 179, 66, 0.25), 0 0 30px rgba(156, 204, 101, 0.15);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(124, 179, 66, 0.35), 0 0 40px rgba(156, 204, 101, 0.25);
+  }
+}
+
+@keyframes cyanGlow {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(67, 233, 123, 0.25), 0 0 30px rgba(56, 249, 215, 0.15);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(67, 233, 123, 0.35), 0 0 40px rgba(56, 249, 215, 0.25);
+  }
+}
+
+/* 默认普通称号样式（备用） */
+.title-card.owned.rarity-common:not(.common-teal):not(.common-coral):not(.common-mint):not(.common-brown):not(.common-olive) {
+  background: linear-gradient(135deg, rgba(32, 178, 170, 0.1) 0%, rgba(64, 224, 208, 0.15) 100%);
+  box-shadow: 0 4px 20px rgba(32, 178, 170, 0.25);
+}
+
+.title-card.owned.rarity-rare {
+  background: linear-gradient(135deg, rgba(0, 112, 221, 0.1) 0%, rgba(100, 180, 255, 0.15) 100%);
+  box-shadow: 0 4px 20px rgba(0, 112, 221, 0.25);
+}
+
+.title-card.owned.rarity-epic {
+  background: linear-gradient(135deg, rgba(163, 53, 238, 0.1) 0%, rgba(200, 100, 255, 0.15) 100%);
+  box-shadow: 0 4px 20px rgba(163, 53, 238, 0.25);
+}
+
+.title-card.owned.rarity-legendary {
+  background: linear-gradient(135deg, rgba(255, 180, 0, 0.15) 0%, rgba(255, 215, 0, 0.2) 100%);
+  box-shadow: 0 4px 20px rgba(255, 180, 0, 0.3);
+}
+
+.title-card.owned::after {
+  content: '✓';
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(86, 171, 47, 0.4);
+}
+
+.title-icon {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border-radius: 16px;
+    transition: transform 0.3s ease;
+}
+
+.title-card:hover .title-icon {
+    transform: scale(1.05);
+}
+
+.title-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--text-primary, #333);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rarity-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+
+.title-description {
+  font-size: 14px;
+  color: var(--text-secondary, #666);
+}
+
+.title-condition {
+  font-size: 12px;
+  color: var(--text-tertiary, #999);
+  margin-top: 4px;
+}
+
+.title-progress {
+  margin-top: 12px;
+}
+
+.progress-bar {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 11px;
+  color: var(--text-tertiary, #999);
+}
+
+.equip-button {
+  margin-top: 16px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.equip-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.equip-button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.equip-button:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(107, 114, 128, 0.5);
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+}
+
+.equip-button:active {
+  transform: translateY(-2px) scale(1);
+}
+
+/* 正在穿戴的称号卡片 */
+.title-card.equipped {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.15) 0%, rgba(255, 152, 0, 0.15) 100%);
+  border-color: #ffc107 !important;
+  box-shadow: 0 4px 20px rgba(255, 193, 7, 0.3), inset 0 0 20px rgba(255, 193, 7, 0.1);
+}
+
+.title-card.equipped::after {
+  content: '👑';
+  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.5);
+}
+
+/* 正在穿戴标识 */
+.equipped-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+}
+
+.equipped-badge .equipped-icon {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary, #666);
+}
+
+/* 暗色主题适配 */
+[data-theme='dark'] .title-header h2 {
+  color: var(--text-primary, #e5e5e5);
+}
+
+[data-theme='dark'] .subtitle {
+  color: var(--text-secondary, #999);
+}
+
+[data-theme='dark'] .category-tab {
+  background: #2a2a2a;
+  border-color: #404040;
+  color: #e5e5e5;
+}
+
+[data-theme='dark'] .title-card {
+  background: #2a2a2a;
+}
+
+[data-theme='dark'] .title-card.owned {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+}
+
+[data-theme='dark'] .title-name {
+  color: var(--text-primary, #e5e5e5);
+}
+
+[data-theme='dark'] .title-description {
+  color: var(--text-secondary, #999);
+}
+
+[data-theme='dark'] .title-condition {
+  color: var(--text-tertiary, #666);
+}
+
+[data-theme='dark'] .progress-bar {
+  background: #404040;
+}
+
+[data-theme='dark'] .empty-state {
+  color: var(--text-secondary, #999);
+}
+
+[data-theme='dark'] .title-card.equipped {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.2) 0%, rgba(255, 152, 0, 0.2) 100%);
+}

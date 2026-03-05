@@ -1,0 +1,192 @@
+/* 浮动操作徽章 - 融合等级徽章和定位功能 */
+.floating-action-badge {
+  position: fixed;
+  top: 50%;
+  right: 60px;
+  transform: translateY(-50%);
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  /* 固定容器大小 */
+  width: 160px;
+  height: 160px;
+  /* 调试边界 */
+  /* border: 1px solid red; */
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .floating-action-badge {
+    right: 16px;
+    width: 120px;
+    height: 120px;
+  }
+}
+
+/* ========== 中心图标 ========== */
+.fab-badge-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  z-index: 10;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s ease;
+}
+
+.fab-badge-center:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.fab-badge-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+}
+
+/* 光晕层 */
+.fab-glow-layer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140%;
+  height: 140%;
+  border-radius: 50%;
+  z-index: -1;
+  opacity: 0.6;
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+/* ========== 环形菜单层 ========== */
+.fab-menu-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 扇形按钮通用样式 */
+.fab-sector-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+
+  /* 制作圆环：内径 35px, 外径 75px */
+  -webkit-mask: radial-gradient(transparent 35px, black 36px, black 75px, transparent 76px);
+  mask: radial-gradient(transparent 35px, black 36px, black 75px, transparent 76px);
+
+  background: rgba(160, 160, 160, 0.2);
+  backdrop-filter: blur(4px);
+  pointer-events: auto; /* 扇形区域响应点击 */
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+/* 鼠标进入整体容器时显示扇形 */
+.floating-action-badge:hover .fab-sector-item {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* 扇形 hover 高亮 */
+.fab-sector-item:hover {
+  background: rgba(251, 191, 36, 0.9); /* 金黄色 */
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+}
+
+/* === 左上角扇形 (反馈) === */
+.fab-sector-feedback {
+  /* 裁剪左上角 90度 */
+  clip-path: polygon(0 0, 50% 0, 50% 50%, 0 50%);
+}
+
+/* 图标定位 - 计算位置 */
+.fab-sector-icon {
+  position: absolute;
+  /* 这里的定位是相对于 160x160 容器的 */
+  /* 左上角 45度方向，半径约 55px */
+  /* center=80, radius=55 */
+  /* left = 80 - 55*0.707 ≈ 41px -> 25.6% */
+  /* top = 80 - 55*0.707 ≈ 41px -> 25.6% */
+  top: 26%;
+  left: 26%;
+  transform: translate(-50%, -50%);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  pointer-events: none; /* 图标不拦截点击 */
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.fab-sector-item:hover .fab-sector-icon {
+  opacity: 1;
+}
+
+.fab-sector-icon img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: brightness(0.3); /* 默认深色 */
+}
+
+.fab-sector-item:hover .fab-sector-icon img {
+  filter: brightness(0) invert(1); /* 选中变白 */
+}
+
+/* 文字标签 - 位于图标下方 */
+.fab-badge-label {
+  position: absolute;
+  top: 115px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex !important;
+  flex-direction: row; /* 横向并排 */
+  align-items: center;
+  gap: 6px; /* 增加间距 */
+  pointer-events: none;
+  z-index: 20;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9), 0 0 2px rgba(255, 255, 255, 1);
+  white-space: nowrap;
+}
+
+.fab-badge-level {
+  font-size: 11px;
+  font-weight: 800;
+  color: #6366f1;
+  font-family: 'SF Mono', monospace;
+  line-height: 1;
+}
+
+.fab-badge-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1;
+}

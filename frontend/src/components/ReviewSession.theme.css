@@ -1,0 +1,486 @@
+/* 深色主题覆盖 - ReviewSession */
+
+.review-session-desktop.dark .desktop-header {
+    background: var(--paper-color);
+    border-bottom-color: var(--border-color);
+}
+
+.review-session-desktop.dark .mode-switch .mode-btn {
+    background: transparent;
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .mode-switch .mode-btn:hover:not(.active) {
+    background: var(--accent-light);
+    color: var(--accent-color);
+}
+
+.review-session-desktop.dark .mode-switch .mode-btn.active {
+    background: var(--paper-color);
+    border-color: var(--accent-color);
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .progress-container {
+    background: transparent;
+}
+
+.review-session-desktop.dark .progress-text {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .progress-bar-desktop {
+    background: var(--border-color);
+}
+
+.review-session-desktop.dark .progress-fill {
+    background: var(--accent-color);
+}
+
+.review-session-desktop.dark .desktop-main {
+    background: var(--bg-color);
+}
+
+.review-session-desktop.dark .card-left,
+.review-session-desktop.dark .card-right {
+    background: var(--bg-color);
+}
+
+.review-session-desktop.dark .word-section {
+    background: var(--paper-color);
+    border-color: var(--border-color);
+}
+
+.review-session-desktop.dark .word-row {
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .word-text {
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .phonetic-text {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .example-section {
+    background: var(--paper-color);
+    border-color: var(--border-color);
+}
+
+.review-session-desktop.dark .example-text {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .translation-text {
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .spell-section {
+    background: var(--paper-color);
+    border-color: var(--border-color);
+}
+
+.review-session-desktop.dark .spell-input {
+    background: var(--bg-color);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .spell-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .spell-input:focus {
+    border-color: var(--accent-color);
+}
+
+.review-session-desktop.dark .result-feedback {
+    background: var(--paper-color);
+    border-color: var(--border-color);
+}
+
+.review-session-desktop.dark .result-feedback.correct {
+    border-color: var(--success-color);
+    color: var(--success-color);
+}
+
+.review-session-desktop.dark .result-feedback.incorrect {
+    border-color: var(--error-color);
+    color: var(--error-color);
+}
+
+.review-session-desktop.dark .correct-answer {
+    color: var(--success-color);
+}
+
+.review-session-desktop.dark .hint-box {
+    background: var(--paper-color);
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .hint-label {
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .desktop-footer {
+    background: var(--paper-color);
+    border-top-color: var(--border-color);
+}
+
+.review-session-desktop.dark .footer-hint {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .action-btn {
+    background: var(--paper-color);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.review-session-desktop.dark .action-btn:hover:not(:disabled) {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.review-session-desktop.dark .action-btn.forget {
+    background: #3d1f1f;
+    border-color: #f87171;
+    color: #fecaca;
+}
+
+.review-session-desktop.dark .action-btn.forget:hover:not(:disabled) {
+    background: #4a2626;
+    border-color: #f87171;
+    color: #fecaca;
+    box-shadow: 0 8px 16px rgba(248, 113, 113, 0.2);
+}
+
+.review-session-desktop.dark .action-btn.fuzzy {
+    background: #3d3320;
+    border-color: #fbbf24;
+    color: #fef08a;
+}
+
+.review-session-desktop.dark .action-btn.fuzzy:hover:not(:disabled) {
+    background: #4a4028;
+    border-color: #fbbf24;
+    color: #fef08a;
+    box-shadow: 0 8px 16px rgba(251, 191, 36, 0.2);
+}
+
+.review-session-desktop.dark .action-btn.know {
+    background: #1f3a1f;
+    border-color: #6ee7b7;
+    color: #a7f3d0;
+}
+
+.review-session-desktop.dark .action-btn.know:hover:not(:disabled) {
+    background: #274d27;
+    border-color: #6ee7b7;
+    color: #a7f3d0;
+    box-shadow: 0 8px 16px rgba(110, 231, 183, 0.2);
+}
+
+.review-session-desktop.dark .immersive-controls {
+    background: var(--paper-color);
+    border-color: var(--border-color);
+}
+
+.review-session-desktop.dark .mini-control {
+    background: transparent;
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .mini-control:hover {
+    background: var(--accent-light);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.review-session-desktop.dark .mini-progress {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .completion-message {
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .completion-stats {
+    background: var(--paper-color);
+    border-color: var(--border-color);
+}
+
+.review-session-desktop.dark .stat-item {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .stat-value {
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .action-buttons {
+    background: transparent;
+}
+
+/* 深色主题 - 卡片特殊优化 */
+.review-session-desktop.dark .card-left {
+    background: var(--paper-color);
+    border-color: var(--border-color);
+}
+
+.review-session-desktop.dark .word-section {
+    border-bottom-color: var(--border-color);
+}
+
+.review-session-desktop.dark .example-section {
+    background: var(--info-bg);
+    border-left-color: var(--accent-color);
+}
+
+.review-session-desktop.dark .example-en {
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .example-zh {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .morpheme-section {
+    background: var(--info-bg);
+    border-color: var(--info-border);
+}
+
+.review-session-desktop.dark .morpheme-item {
+    background: var(--bg-color);
+}
+
+.review-session-desktop.dark .morpheme-name {
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .info-section {
+    background: var(--info-bg);
+    border-color: var(--info-border);
+}
+
+.review-session-desktop.dark .info-content {
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .spell-input {
+    background: var(--paper-color);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .spell-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .spell-input:focus {
+    border-color: var(--accent-color);
+    background: var(--info-bg);
+    box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+.review-session-desktop.dark .spell-input.correct {
+    border-color: #10b981;
+    background: var(--bg-color);
+    color: #86efac;
+}
+
+.review-session-desktop.dark .spell-input.incorrect {
+    border-color: #f87171;
+    background: var(--bg-color);
+    color: #fecaca;
+}
+
+.review-session-desktop.dark .check-btn {
+    background: var(--accent-color);
+    color: white;
+}
+
+.review-session-desktop.dark .check-btn:hover {
+    box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
+}
+
+/* 深色主题 - 默写模式 */
+.review-session-desktop.dark .hint-word-small {
+    color: var(--accent-color);
+}
+
+.review-session-desktop.dark .hint-prompt {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .placeholder-text {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .audio-section-spell {
+    background: var(--info-bg);
+    border-color: var(--info-border);
+}
+
+.review-session-desktop.dark .prompt-phonetic {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .audio-btn-spell {
+    background: var(--accent-light);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.review-session-desktop.dark .audio-btn-spell:hover {
+    background: var(--accent-color);
+    color: white;
+}
+
+.review-session-desktop.dark .hint-box {
+    background: var(--accent-light);
+    border-color: var(--accent-color);
+}
+
+.review-session-desktop.dark .hint-label,
+.review-session-desktop.dark .hint-word {
+    color: var(--accent-color);
+}
+
+.review-session-desktop.dark .hint-toggle {
+    background: var(--border-color);
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .hint-toggle:hover {
+    background: var(--accent-light);
+    color: var(--accent-color);
+}
+
+.review-session-desktop.dark .result-badge {
+    font-weight: 600;
+}
+
+.review-session-desktop.dark .result-badge.correct {
+    background: var(--bg-color);
+    color: #10b981;
+    border-color: #10b981;
+}
+
+.review-session-desktop.dark .result-badge.incorrect {
+    background: var(--bg-color);
+    color: #f59e0b;
+    border-color: #f59e0b;
+}
+
+.review-session-desktop.dark .correct-answer {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .correct-answer strong {
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .spell-full-info {
+    background: var(--info-bg);
+    border-color: var(--info-border);
+}
+
+.review-session-desktop.dark .spell-full-info .info-label {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .spell-full-info .info-value {
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .spell-full-info .morpheme-tag {
+    background: var(--accent-light);
+    color: var(--accent-color);
+}
+
+/* 深色主题 - 额外文本颜色修复 */
+.review-session-desktop.dark .section-header span {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .meaning-content {
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .morpheme-meaning,
+.review-session-desktop.dark .morpheme-empty {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .prompt-meaning-large {
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .phonetic-text {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .audio-btn-small {
+    background: var(--accent-light);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.review-session-desktop.dark .audio-btn-small:hover {
+    background: var(--accent-color);
+    color: white;
+}
+
+.review-session-desktop.dark .spell-input-new {
+    background: var(--paper-color);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .spell-input-new:focus {
+    border-color: var(--accent-color);
+    background: var(--info-bg);
+    box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+.review-session-desktop.dark .spell-input-new.correct {
+    border-color: #10b981;
+    background: var(--bg-color);
+    color: #86efac;
+}
+
+.review-session-desktop.dark .spell-input-new.incorrect {
+    border-color: #f87171;
+    background: var(--bg-color);
+    color: #fecaca;
+}
+
+/* 深色主题 - 按钮文字和控制 */
+.review-session-desktop.dark .action-item > .btn-desc {
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .btn-key {
+    opacity: 0.8;
+    color: var(--text-secondary);
+}
+
+.review-session-desktop.dark .close-btn {
+    background: transparent;
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.review-session-desktop.dark .close-btn:hover,
+.review-session-desktop.dark .close-btn:focus,
+.review-session-desktop.dark .close-btn:focus-visible {
+    background: var(--bg-color);
+    border-color: var(--text-primary);
+    color: var(--text-primary);
+}

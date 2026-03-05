@@ -1,0 +1,285 @@
+/* 合集选择页面 - 商业级现代化设计 */
+
+.category-selection {
+    min-height: 100vh;
+    background-color: #F8FAFC; 
+    padding: 40px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 头部区域 */
+.category-selection-header {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+/* 标题区域 */
+.category-selection-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1E293B;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 副标题/标语 */
+.category-selection-subtitle {
+    font-size: 15px;
+    color: #64748B;
+    font-weight: 500;
+    line-height: 1.6;
+    letter-spacing: 0.5px;
+    margin: 0;
+}
+
+/* 深色模式适配 */
+[data-theme="dark"] .category-selection-title {
+    color: #F8FAFC;
+}
+
+[data-theme="dark"] .category-selection-subtitle {
+    color: #94A3B8;
+}
+
+/* 网格布局 */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 60px;
+}
+
+/* 卡片容器 */
+.category-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    cursor: pointer;
+}
+
+.category-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.08);
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
+/* 卡片顶部视觉区域 */
+.category-card-visual {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    background: #F1F5F9;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* 渐变色变体 */
+.visual-gradient-1 { background: linear-gradient(135deg, #E0E7FF 0%, #A5B4FC 100%); }
+.visual-gradient-2 { background: linear-gradient(135deg, #FCE7F3 0%, #F9A8D4 100%); }
+.visual-gradient-3 { background: linear-gradient(135deg, #D1FAE5 0%, #6EE7B7 100%); }
+.visual-gradient-4 { background: linear-gradient(135deg, #FFEDD5 0%, #FDBA74 100%); }
+
+/* 封面图片样式 */
+.category-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.category-card:hover .category-card-image {
+    transform: scale(1.05);
+}
+
+/* 默认图标样式 */
+.category-icon-wrapper {
+    font-size: 56px;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+
+/* 卡片内容区域 */
+.category-card-content {
+    padding: 24px; 
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 标签行 */
+.category-tags {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+/* 标签改为黑色背景，白色文字 */
+.category-tag {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: #000000; /* 黑色背景 */
+    color: #FFFFFF; /* 白色文字 */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 标题 */
+.category-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1E293B;
+    margin: 0 0 6px 0;
+    line-height: 1.4;
+}
+
+/* 描述文字 */
+.category-description {
+    font-size: 13px;
+    color: #64748B;
+    line-height: 1.5;
+    margin: 0 0 16px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+}
+
+/* 底部信息栏 */
+.category-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 16px;
+    padding-bottom: 4px; /* 增加底部间距 */
+    border-top: 1px solid #F1F5F9;
+    margin-top: auto;
+    width: 100%;
+}
+
+/* 统计信息改为黑色 */
+.category-stats {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: #000000; /* 黑色文字 */
+    font-weight: 700; /* 加粗一点更清晰 */
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.stat-item svg {
+    width: 12px;
+    height: 12px;
+    stroke: #000000; /* 黑色图标 */
+    stroke-width: 3; 
+    flex-shrink: 0;
+}
+
+/* 操作按钮 - 圆角长方形，紧凑设计，默认灰色悬停金色 */
+.category-card .action-btn {
+    /* 强制覆盖所有可能的样式冲突 */
+    width: auto !important;
+    min-width: 100px !important;
+    max-width: 120px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    max-height: 36px !important;
+    padding: 8px 16px !important;
+    border-radius: 10px !important;
+    background: #9CA3AF !important; /* 默认灰色 */
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px !important;
+    color: #FFFFFF;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+    border: none !important;
+    cursor: pointer;
+    white-space: nowrap !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0 !important;
+    line-height: 1 !important;
+}
+
+.category-card .action-btn:hover,
+.category-card:hover .action-btn {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important; /* 金色渐变 */
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+}
+
+.category-card .action-btn svg {
+    width: 16px !important;
+    height: 16px !important;
+    stroke-width: 2.5;
+    flex-shrink: 0;
+}
+
+/* 深色模式适配 */
+[data-theme="dark"] .category-selection {
+    background-color: #0F172A;
+}
+
+[data-theme="dark"] .category-card {
+    background: #1E293B;
+    border-color: #334155;
+}
+
+[data-theme="dark"] .stat-item {
+    color: #FFFFFF; /* 深色模式下用白色或浅色 */
+}
+
+[data-theme="dark"] .stat-item svg {
+    stroke: #FFFFFF;
+}
+
+[data-theme="dark"] .category-tag {
+    background: #FFFFFF; /* 深色模式下标签可以反转 */
+    color: #000000;
+}
+
+[data-theme="dark"] .category-card .action-btn {
+    background: #6B7280 !important; /* 深色模式默认灰色 */
+}
+
+[data-theme="dark"] .category-card .action-btn:hover,
+[data-theme="dark"] .category-card:hover .action-btn {
+    background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%) !important; /* 金色渐变 */
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+}
+
+@media (max-width: 640px) {
+    .categories-grid {
+        grid-template-columns: 1fr;
+    }
+}

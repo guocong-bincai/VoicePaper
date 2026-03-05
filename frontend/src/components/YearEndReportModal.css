@@ -1,0 +1,331 @@
+.year-report-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.92);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  backdrop-filter: blur(12px);
+  animation: fadeIn 0.5s ease-out;
+  padding: 20px;
+}
+
+.year-report-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 100%;
+}
+
+.year-report-container {
+  position: relative;
+  width: 90vw; /* Responsive width */
+  max-width: 440px;
+  background: transparent;
+  border-radius: 20px;
+  overflow: hidden; /* Ensure bg image fits */
+  box-shadow: 0 0 50px rgba(0, 200, 255, 0.15);
+  animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* Ensure clean capture */
+  transform: translateZ(0); 
+}
+
+/* Old close button removed from inside container, used external button instead */
+.year-report-close {
+  display: none; 
+}
+
+.year-report-content {
+  position: relative;
+  width: 100%;
+  line-height: 0;
+}
+
+.year-report-bg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.year-report-loading {
+  padding: 80px;
+  text-align: center;
+  color: #00ffff;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+/* ================= Data Grid Area ================= */
+.report-grid-area {
+  position: absolute;
+  top: 20%; 
+  left: 6%;
+  right: 6%;
+  height: 45%;
+}
+
+/* Common Card Style - "Holographic Glass" */
+.report-item {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.2) 100%);
+  border: 1px solid rgba(0, 255, 255, 0.15);
+  box-shadow: 
+    0 4px 15px rgba(0,0,0,0.3),
+    inset 0 0 20px rgba(0, 255, 255, 0.05);
+  backdrop-filter: blur(4px);
+  transition: transform 0.3s ease;
+}
+
+.report-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.report-value {
+  font-family: 'DIN Alternate', 'Roboto Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  filter: drop-shadow(0 0 8px rgba(0,0,0,0.5));
+}
+
+.unit {
+  font-size: 0.75rem;
+  margin-left: 3px;
+  opacity: 0.7;
+  font-weight: normal;
+}
+
+/* --- Layout Strategy: HUD Style --- */
+
+/* 1. Main Stat: Articles Read */
+.item-articles {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 90px;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(0, 255, 255, 0.1) 0%, rgba(0, 100, 200, 0.2) 100%);
+  border-color: rgba(0, 255, 255, 0.3);
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.15) inset;
+  z-index: 2;
+}
+.text-cyan {
+  color: #fff;
+  font-size: 2.8rem;
+  text-shadow: 
+    0 0 10px rgba(0, 255, 255, 0.8),
+    0 0 20px rgba(0, 255, 255, 0.4);
+}
+
+/* 2. Left Column: Check-in */
+.item-checkin {
+  top: 36%;
+  left: 0;
+  width: 46%;
+  height: 80px;
+  align-items: flex-start;
+}
+.text-purple {
+  color: #e0aaff;
+  text-shadow: 0 0 12px rgba(224, 170, 255, 0.6);
+}
+
+/* 3. Right Column: Words */
+.item-words {
+  top: 36%;
+  right: 0;
+  width: 46%;
+  height: 80px;
+  align-items: flex-end;
+  text-align: right;
+}
+.text-green {
+  color: #afffc6;
+  text-shadow: 0 0 12px rgba(175, 255, 198, 0.6);
+}
+
+/* 4. Left Column Bottom: Duration */
+.item-duration {
+  top: 66%;
+  left: 0;
+  width: 46%;
+  height: 80px;
+  align-items: flex-start;
+}
+.text-orange {
+  color: #ffdab9;
+  text-shadow: 0 0 12px rgba(255, 218, 185, 0.6);
+}
+
+/* 5. Right Column Bottom: Points */
+.item-points {
+  top: 66%;
+  right: 0;
+  width: 46%;
+  height: 80px;
+  align-items: flex-end;
+  text-align: right;
+}
+.text-yellow {
+  color: #fffacd;
+  text-shadow: 0 0 12px rgba(255, 250, 205, 0.6);
+}
+
+
+/* ================= Rank Area ================= */
+.report-rank-area {
+  position: absolute;
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  width: 100%;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rank-title {
+  font-size: 0.9rem;
+  color: rgba(255, 215, 0, 0.9);
+  letter-spacing: 6px;
+  margin-bottom: 0px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  font-weight: 700;
+  background: linear-gradient(90deg, transparent, rgba(0,0,0,0.5), transparent);
+  padding: 4px 20px;
+  border-radius: 20px;
+  border: none; /* Removed border */
+}
+
+.rank-value {
+  font-family: 'Impact', 'Arial Black', sans-serif;
+  font-size: 4.8rem;
+  line-height: 1;
+  margin-top: -5px;
+  background: linear-gradient(
+    180deg, 
+    #ffffff 10%, 
+    #ffd700 45%, 
+    #b8860b 70%, 
+    #8b4500 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.4));
+  position: relative;
+}
+
+.rank-hash {
+  font-size: 1.8rem;
+  margin-right: 6px;
+  vertical-align: top;
+  position: relative;
+  top: 15px;
+  -webkit-text-fill-color: #ffd700;
+}
+
+/* ================= User Info ================= */
+.user-info-tag {
+  position: absolute;
+  bottom: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  min-width: 200px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 20px;
+  border-radius: 25px;
+  backdrop-filter: blur(10px);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.85rem;
+  letter-spacing: 1.5px;
+  z-index: 10;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+.user-nickname {
+  color: #00ffff;
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+/* ================= Action Buttons ================= */
+.report-actions {
+  display: flex;
+  gap: 15px;
+  z-index: 100;
+}
+
+.action-btn {
+  padding: 10px 24px;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.download-btn {
+  background: #00ffff;
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+}
+
+.download-btn:hover {
+  background: #fff;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+.download-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.report-close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(4px);
+}
+
+.report-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  /* Removed translateY to keep the style consistent as requested */
+  border-radius: 30px; /* Force maintain pill shape even if global styles try to override */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(60px) scale(0.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}

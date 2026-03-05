@@ -1,0 +1,390 @@
+/* LoadingPage - 优雅的等待页面 */
+
+.loading-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-color);
+  z-index: 9999;
+  overflow: hidden;
+}
+
+/* 背景装饰 */
+.loading-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.loading-gradient {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at 30% 50%,
+    rgba(37, 99, 235, 0.08) 0%,
+    transparent 50%
+  );
+  animation: gradientRotate 20s ease-in-out infinite;
+}
+
+.loading-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(37, 99, 235, 0.03) 1px, transparent 0);
+  background-size: 40px 40px;
+  opacity: 0.5;
+}
+
+@keyframes gradientRotate {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+}
+
+/* 主内容 */
+.loading-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 600px;
+  padding: 2rem;
+}
+
+/* Logo */
+.loading-logo {
+  margin-bottom: 3rem;
+  animation: fadeInDown 0.8s ease-out;
+}
+
+.loading-logo-text {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -1px;
+}
+
+.loading-logo-dot {
+  color: var(--accent-color);
+  font-size: 42px;
+  font-weight: 700;
+}
+
+/* 加载动画 */
+.loading-animation {
+  margin-bottom: 3rem;
+  animation: fadeIn 1s ease-out 0.2s both;
+}
+
+.loading-spinner {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+}
+
+.spinner-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid transparent;
+  border-top-color: var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.spinner-ring:nth-child(1) {
+  animation-delay: 0s;
+  opacity: 1;
+}
+
+.spinner-ring:nth-child(2) {
+  animation-delay: -0.4s;
+  opacity: 0.7;
+  width: 70%;
+  height: 70%;
+  top: 15%;
+  left: 15%;
+}
+
+.spinner-ring:nth-child(3) {
+  animation-delay: -0.8s;
+  opacity: 0.5;
+  width: 50%;
+  height: 50%;
+  top: 25%;
+  left: 25%;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 标语 */
+.loading-slogan {
+  margin-bottom: 2.5rem;
+  animation: fadeInUp 1s ease-out 0.4s both;
+}
+
+.loading-slogan-cn {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 1rem 0;
+  letter-spacing: 2px;
+  line-height: 1.4;
+}
+
+.loading-divider {
+  width: 60px;
+  height: 2px;
+  background: var(--accent-color);
+  margin: 1rem auto;
+  opacity: 0.6;
+}
+
+.loading-slogan-en {
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+/* 加载提示 */
+.loading-message {
+  animation: fadeIn 1s ease-out 0.6s both;
+}
+
+.loading-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0 0 1rem 0;
+  font-weight: 500;
+}
+
+.loading-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1rem;
+}
+
+.loading-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  animation: dotBounce 1.4s ease-in-out infinite;
+}
+
+.loading-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dotBounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  30% {
+    transform: translateY(-12px);
+    opacity: 1;
+  }
+}
+
+/* 装饰元素 */
+.loading-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.decoration-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--accent-color);
+  opacity: 0.1;
+  animation: float 6s ease-in-out infinite;
+}
+
+.circle-1 {
+  width: 200px;
+  height: 200px;
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.circle-2 {
+  width: 150px;
+  height: 150px;
+  top: 60%;
+  right: 15%;
+  animation-delay: 2s;
+}
+
+.circle-3 {
+  width: 100px;
+  height: 100px;
+  bottom: 15%;
+  left: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 深色主题适配 */
+.loading-page.dark .loading-gradient {
+  background: radial-gradient(
+    circle at 30% 50%,
+    rgba(59, 130, 246, 0.12) 0%,
+    transparent 50%
+  );
+}
+
+.loading-page.dark .loading-pattern {
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.05) 1px, transparent 0);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .loading-logo-text,
+  .loading-logo-dot {
+    font-size: 36px;
+  }
+
+  .loading-slogan-cn {
+    font-size: 26px;
+    letter-spacing: 1px;
+  }
+
+  .loading-slogan-en {
+    font-size: 16px;
+    letter-spacing: 2px;
+  }
+
+  .loading-spinner {
+    width: 60px;
+    height: 60px;
+  }
+
+  .circle-1 {
+    width: 150px;
+    height: 150px;
+  }
+
+  .circle-2 {
+    width: 120px;
+    height: 120px;
+  }
+
+  .circle-3 {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .loading-content {
+    padding: 1.5rem;
+  }
+
+  .loading-logo-text,
+  .loading-logo-dot {
+    font-size: 32px;
+  }
+
+  .loading-slogan-cn {
+    font-size: 22px;
+  }
+
+  .loading-slogan-en {
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+
+  .loading-text {
+    font-size: 14px;
+  }
+}
+

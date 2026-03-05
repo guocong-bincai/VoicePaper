@@ -1,0 +1,60 @@
+.DS_Store
+.idea/
+.vscode/
+*.log
+tmp/
+dist/
+node_modules/
+
+# User requested ignores
+.cursor/
+.deepvcode/
+earthworm/
+
+# Markdown files (ignore all .md files except README.md)
+*.md
+!README.md
+!**/README.md
+
+
+# Environment variables
+.env
+.env.local
+backend/.env
+**/.env
+!**/env.example
+!**/.env.example
+
+# Data directories
+data/*
+!data/.keep
+backend/data/*
+!backend/data/.keep
+
+# Configuration Files with Secrets
+backend/etc/config.yaml
+backend/etc/config_pro.yaml
+
+# 编译后的二进制文件
+backend/server
+frontend/dist
+**/dist/
+
+# 数据库文件
+backend/data/*.db
+backend/data/*.db-shm
+backend/data/*.db-wal
+*.db
+*.db-shm
+*.db-wal
+
+# 编译后的二进制文件
+backend/server
+frontend/dist
+
+# 数据库文件
+backend/data/*.db
+backend/data/*.db-shm
+backend/data/*.db-wal
+
+test_pic

@@ -1,0 +1,89 @@
+.floating-back-button {
+  position: fixed !important;
+  left: 24px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: auto !important;
+  height: auto !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+  z-index: 9999 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.floating-back-button:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: translateY(-50%) scale(1.15);
+}
+
+.floating-back-button:active {
+  transform: translateY(-50%) scale(0.92);
+}
+
+.floating-back-button .back-icon {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  opacity: 0.75;
+  animation: backButtonGlowGolden 2s ease-in-out infinite;
+  transition: opacity 0.3s ease, animation-duration 0.3s ease;
+}
+
+.floating-back-button:hover .back-icon {
+  opacity: 1;
+  animation-duration: 1.2s;
+}
+
+/* 金黄色闪烁动画 - 始终启动 */
+@keyframes backButtonGlowGolden {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(255, 200, 0, 0.6))
+            drop-shadow(0 0 16px rgba(255, 180, 0, 0.5))
+            drop-shadow(0 0 24px rgba(255, 150, 0, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.9))
+            drop-shadow(0 0 28px rgba(255, 190, 0, 0.8))
+            drop-shadow(0 0 40px rgba(255, 165, 0, 0.6));
+  }
+}
+
+@media (hover: hover) {
+  .floating-back-button:hover .back-icon {
+    filter: drop-shadow(0 0 20px rgba(255, 230, 0, 1))
+            drop-shadow(0 0 32px rgba(255, 200, 0, 1))
+            drop-shadow(0 0 48px rgba(255, 165, 0, 0.9)) !important;
+  }
+}
+
+/* 暗色模式适配 */
+[data-theme="dark"] .floating-back-button {
+  background: transparent !important;
+  border-color: transparent !important;
+}
+
+[data-theme="dark"] .floating-back-button:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* 响应式设计：小屏幕上调整位置 */
+@media (max-width: 768px) {
+  .floating-back-button {
+    left: 12px;
+  }
+
+  .floating-back-button .back-icon {
+    width: 42px;
+    height: 42px;
+  }
+}

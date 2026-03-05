@@ -1,0 +1,1791 @@
+/* DictationPage - 默写练习页面 */
+
+/* ============================================
+   竞品级别的听写页面设计 - 完全重写
+   灵感来源：Earthworm
+   极简、优雅、专注
+   ============================================ */
+
+/* 全局强制覆盖 - 确保无黑边 */
+body:has(.dictation-page-overlay) {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+html:has(.dictation-page-overlay) {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+#root:has(.dictation-page-overlay) {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+}
+
+/* 全屏覆盖层 - 完全居中布局 */
+.dictation-page-overlay {
+  /* CSS变量定义 - 浅色主题（参考Duolingo/现代学习APP） */
+  --bg-color: #FFFFFF;
+  --paper-color: #FFFFFF;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --accent-color: #10b981; /* emerald-500 清爽绿色 */
+  --accent-light: #d1fae5;
+  --accent-secondary: #3b82f6; /* blue-500 蓝色辅助 */
+  --border-color: #e5e7eb;
+  --success-color: #10b981; /* green-500 */
+  --error-color: #ef4444; /* red-500 */
+
+  /* 固定定位，全屏覆盖 */
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+
+  /* 背景色 - 纯白，干净清爽 */
+  background: #FFFFFF !important;
+
+  /* Flexbox 垂直居中 */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* 清除所有边距 */
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+
+  /* 隐藏溢出 */
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  /* 最高层级 */
+  z-index: 999999 !important;
+}
+
+.dictation-page-overlay.dark {
+  /* CSS变量定义 - 深色主题 */
+  --bg-color: #0f172a; /* slate-900 更深的深色 */
+  --paper-color: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --accent-color: #d946ef;
+  --accent-light: #581c87;
+  --border-color: #334155;
+
+  background: #0f172a !important;
+}
+
+.dictation-page {
+  /* 内部容器 - 竞品风格：极简布局 */
+  position: relative !important;
+  width: 100% !important;
+  max-width: 1200px !important;
+  min-height: 100vh !important;
+
+  /* 透明背景 */
+  background: transparent !important;
+
+  /* 纵向排列，内容居中 */
+  display: flex !important;
+  flex-direction: column !important;
+
+  /* 清除边距 */
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+
+  /* 盒模型 */
+  box-sizing: border-box !important;
+}
+
+/* ============================================
+   隐藏滚动条 - 彻底隐藏
+   ============================================ */
+
+/* 隐藏外层容器的滚动条 */
+.dictation-page-overlay::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.dictation-page-overlay {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+/* 隐藏内层容器的滚动条 */
+.dictation-page::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.dictation-page {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+/* 隐藏侧边栏和相关元素 */
+.dictation-page ~ .article-sidebar,
+.dictation-page ~ .sidebar-toggle-button,
+.dictation-page ~ .sidebar-overlay,
+body:has(.dictation-page) .article-sidebar,
+body:has(.dictation-page) .sidebar-toggle-button,
+body:has(.dictation-page) .sidebar-overlay,
+body:has(.dictation-page) .bottom-player {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* ============================================
+   顶部导航 - 固定在页面顶部
+   ============================================ */
+
+.dictation-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px; /* 减少padding */
+  background: transparent; /* 改为透明 */
+  border-bottom: none; /* 移除边框 */
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* 如果全屏时需要背景色，可以保留这个逻辑 */
+.dictation-page-overlay.dark .dictation-header {
+  background: transparent;
+  border-bottom: none;
+}
+
+/* 左侧按钮容器 */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 右侧按钮容器 */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
+.dictation-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  outline: none !important;
+}
+
+/* 仅图标的返回按钮 */
+.dictation-back-btn.icon-only {
+  padding: 8px;
+  min-width: 36px;
+}
+
+.dictation-back-btn.icon-only span {
+  display: none;
+}
+
+/* 带文字的返回阅读按钮 */
+.dictation-back-btn.with-text {
+  padding: 8px 16px;
+}
+
+.dictation-back-btn:hover,
+.dictation-back-btn:focus,
+.dictation-back-btn:focus-visible {
+  background: var(--bg-color);
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.dictation-back-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.dictation-title {
+  flex: 1;
+  text-align: center;
+}
+
+/* 标题信息文字 */
+.dictation-title-text {
+  text-align: center;
+}
+
+.dictation-title h1 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: var(--text-primary);
+}
+
+.dictation-title p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.article-title-subtitle {
+  font-size: 13px !important;
+  color: var(--text-secondary) !important;
+  margin: 0 !important;
+  max-width: 600px;
+  margin: 0 auto !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+.dictation-mode-toggle {
+  display: flex;
+  gap: 8px;
+  background: var(--bg-color);
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.mode-btn {
+  padding: 8px 20px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none !important;
+}
+
+.mode-btn:focus,
+.mode-btn:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.mode-btn.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+}
+
+/* 全屏沉浸按钮 */
+.fullscreen-btn {
+  width: 36px;
+  height: 36px;
+  padding: 6px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 101;
+  pointer-events: auto;
+}
+
+.fullscreen-btn:hover {
+  background: #d1fae5;
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.fullscreen-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* 主题切换按钮 */
+.theme-toggle-btn {
+  width: 36px;
+  height: 36px;
+  padding: 6px;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 101;
+  pointer-events: auto;
+}
+
+.theme-toggle-btn:hover {
+  background: #d1fae5;
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.theme-toggle-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+[data-theme="dark"] .theme-toggle-btn {
+  border-color: rgba(251, 191, 36, 0.3);
+  color: #fbbf24;
+}
+
+[data-theme="dark"] .theme-toggle-btn:hover {
+  background: rgba(251, 191, 36, 0.15);
+  border-color: #fbbf24;
+}
+
+/* ============================================
+   进度条 - 竞品风格：紫色渐变进度条
+   ============================================ */
+
+.dictation-progress {
+  padding: 12px 20px; /* 减少padding */
+  background: var(--bg-color);
+  border-bottom: 1px solid var(--border-color);
+  width: 100%;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.progress-bar {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 4px !important;
+  background: rgba(0, 0, 0, 0.1); /* 浅灰色背景 */
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  position: relative;
+  display: block;
+}
+
+.progress-fill {
+  height: 100% !important;
+  background: linear-gradient(90deg, #10b981 0%, #3b82f6 100%); /* 绿到蓝渐变 */
+  border-radius: 2px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: none; /* 去除阴影 */
+  display: block;
+  position: relative;
+}
+
+.progress-text {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* 深色模式下的进度条 */
+.dictation-page-overlay.dark .progress-bar {
+  background: rgba(255, 255, 255, 0.1); /* 深色模式下用白色半透明背景 */
+}
+
+.dictation-page-overlay.dark .progress-fill {
+  background: #FFFFFF; /* 深色模式下用白色进度条 */
+}
+
+/* ============================================
+   主内容区 - 竞品风格：完全居中
+   ============================================ */
+
+.dictation-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 20px 10px 20px; /* 大幅减少padding */
+  width: 100%;
+  background: transparent;
+  min-height: 0; /* 允许flex收缩 */
+  overflow: visible !important; /* 不显示滚动条 */
+}
+
+/* 隐藏内容区的滚动条 */
+.dictation-content::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+}
+
+/* ============================================
+   练习区域 - 竞品风格：极简白卡片
+   ============================================ */
+
+.dictation-practice {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ============================================
+   生词本按钮 - 悬浮在右上角
+   ============================================ */
+.add-to-vocabulary-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  z-index: 10;
+  font-size: 13px;
+  color: #374151;
+  pointer-events: auto; /* Ensure clickable */
+}
+
+.add-to-vocabulary-btn:hover {
+  background: #f0fdf4;
+  border-color: #10b981;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  transform: translateY(-1px);
+}
+
+.add-to-vocabulary-btn:active {
+  transform: translateY(0);
+}
+
+.add-to-vocabulary-btn img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.add-to-vocabulary-btn span {
+  font-weight: 500;
+}
+
+/* 深色模式 */
+.dictation-page-overlay.dark .add-to-vocabulary-btn {
+  background: rgba(31, 41, 55, 0.95);
+  border-color: #374151;
+  color: #e5e7eb;
+}
+
+.dictation-page-overlay.dark .add-to-vocabulary-btn:hover {
+  background: #374151;
+  border-color: #10b981;
+}
+
+.practice-item {
+  background: var(--paper-color);
+  border-radius: 24px;
+  padding: 60px 40px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  transition: box-shadow 0.3s ease;
+}
+
+.practice-item:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* 深色模式下的卡片 */
+.dictation-page-overlay.dark .practice-item {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.dictation-page-overlay.dark .practice-item:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* 无卡片样式 - 直接展示内容 */
+.practice-item-no-card {
+  background: transparent;
+  padding: 20px 20px; /* 减少padding */
+  text-align: center;
+}
+
+.item-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  padding: 20px 0;
+}
+
+.item-prompt p {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* ============================================
+   播放按钮 - 竞品风格：大圆形黑色按钮
+   ============================================ */
+
+.dictation-page .play-btn {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--text-primary);
+  color: var(--paper-color);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15),
+              0 4px 8px rgba(0, 0, 0, 0.1);
+  outline: none !important;
+}
+
+.dictation-page .play-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2),
+              0 6px 12px rgba(0, 0, 0, 0.15);
+  outline: none !important;
+}
+
+.dictation-page .play-btn:active {
+  transform: scale(0.98);
+}
+
+.dictation-page .play-btn svg {
+  width: 36px;
+  height: 36px;
+  margin-left: 4px;
+}
+
+/* 正在播放动画 */
+.item-listening {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 60px 0;
+  min-height: 200px;
+  justify-content: center;
+}
+
+.listening-animation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 60px;
+}
+
+.sound-wave {
+  width: 4px;
+  height: 40px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  animation: wave 1.2s ease-in-out infinite;
+}
+
+.sound-wave:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.sound-wave:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.sound-wave:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: scaleY(0.5);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+.item-listening p.listening-status {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* 功能实现: 朗读时显示内容和翻译的样式 */
+/* 实现方案: 使用卡片样式展示，确保可读性 */
+/* 影响范围: frontend/src/components/DictationPage.css:497-501 */
+/* 实现日期: 2025-12-10 */
+.listening-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 800px;
+  padding: 24px;
+  background: var(--surface-color);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 8px;
+}
+
+.listening-sentence {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text-color);
+  line-height: 1.6;
+  text-align: center;
+}
+
+.listening-translation {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  text-align: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.listening-phonetic {
+  font-size: 18px;
+  color: #3B82F6;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+}
+
+.listening-meaning {
+  font-size: 16px;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* 输入区域 */
+.item-typing {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* 减少间距 */
+}
+
+/* ============================================
+   竞品级别的单词显示区域
+   大字号 + 下划线 + 动画反馈
+   ============================================ */
+
+.word-hint {
+  text-align: center;
+  margin-bottom: 12px; /* 减少margin */
+}
+
+/* 输入显示容器 - 相对定位，用于承载透明输入框 */
+.input-display-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: text;
+}
+
+/* 覆盖在横线上的透明输入框 - 类似竞品earthworm的做法 */
+.overlay-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: text;
+  z-index: 10;
+  font-size: 3rem;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  padding: 0;
+  margin: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.overlay-input:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 音标显示 */
+.word-phonetic {
+  font-size: 20px; /* 减小字体 */
+  color: var(--text-secondary);
+  margin-top: 0px;
+  margin-bottom: 8px; /* 减少margin */
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+}
+
+/* 单词意思显示 */
+.word-meaning {
+  font-size: 24px; /* 减小字体 */
+  color: var(--text-primary);
+  margin-top: 0px;
+  margin-bottom: 8px;
+  font-weight: 400;
+  text-align: center;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 句子翻译提示（在横线上方） */
+.sentence-translation-hint {
+  font-size: 18px; /* 减小字体 */
+  color: var(--text-primary);
+  margin-bottom: 16px; /* 减少margin */
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.6; /* 减小行高 */
+  padding: 8px 20px; /* 减少padding */
+  border-radius: 8px;
+  max-width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 输入显示容器 - 相对定位 */
+.input-display-wrapper {
+  position: relative;
+  cursor: text;
+}
+
+/* 透明输入框 - 覆盖在横线区域上方 */
+.transparent-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: text;
+  font-size: 3rem;
+  border: none;
+  outline: none;
+  background: transparent;
+  z-index: 10;
+}
+
+.transparent-input:disabled {
+  cursor: not-allowed;
+}
+
+.hint-label {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+/* 虚化的单词提示 */
+.word-blur-hint {
+  font-size: 2.5rem; /* 40px */
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: var(--text-secondary);
+  opacity: 0.3;
+  filter: blur(8px);
+  margin: 12px 0;
+  user-select: none;
+  transition: all 0.3s ease;
+  font-family: 'Inter', 'Courier New', monospace;
+}
+
+/* 鼠标悬停时稍微清晰一点 */
+.word-blur-hint:hover {
+  filter: blur(6px);
+  opacity: 0.4;
+}
+
+/* 大字号显示 - 借鉴竞品的 3rem (48px) */
+.underscore-display {
+  display: inline-flex;
+  gap: 12px;
+  font-family: 'Inter', 'Courier New', monospace;
+  font-size: 2.5rem; /* 减小到40px */
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--text-primary);
+  line-height: 1.2;
+  min-height: 3rem; /* 减小最小高度 */
+  padding: 12px 0; /* 减少padding */
+  align-items: flex-end;
+}
+
+/* 句子模式 - 单词显示容器 */
+.sentence-words-display {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px; /* 减少间距 */
+  padding: 12px 0; /* 减少padding */
+  max-width: 90%;
+  margin: 0 auto;
+  align-items: flex-end;
+}
+
+/* 句子中的单词框 - 类似竞品样式 */
+.sentence-word-box {
+  min-width: 4ch;
+  height: auto;
+  font-size: inherit; /* 继承父元素的动态字体大小 */
+  font-weight: 600;
+  font-family: 'Inter', 'Courier New', monospace;
+  color: var(--text-primary);
+  border-bottom: 2px solid #cccccc;
+  padding: 0 8px 4px;
+  text-align: center;
+  line-height: 1.4;
+  letter-spacing: 1px;
+  transition: all 0.2s ease;
+}
+
+/* 功能实现: 当前激活的单词 - 绿色高亮（参考Duolingo） */
+/* 实现方案: 绿色文字和下划线，加粗字体 */
+/* 影响范围: frontend/src/components/DictationPage.css */
+/* 实现日期: 2025-12-10 */
+.sentence-word-box.active {
+  color: #10b981; /* emerald-500 清爽绿色 */
+  border-bottom: 3px solid #10b981; /* 绿色粗下划线 */
+  font-weight: 700; /* 加粗字体 */
+}
+
+/* 已完成的单词 - 正常黑色 */
+.sentence-word-box.completed {
+  color: var(--text-primary);
+  border-bottom-color: var(--text-primary);
+}
+
+/* 未输入的单词 - 灰色 */
+.sentence-word-box.empty {
+  color: rgba(0, 0, 0, 0.2); /* 浅灰色 */
+  border-bottom-color: #e5e5e5;
+}
+
+/* 暗色模式下未输入的单词 */
+@media (prefers-color-scheme: dark) {
+  .sentence-word-box.empty {
+    color: rgba(255, 255, 255, 0.3);
+    border-bottom-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* 功能实现: 错误单词 - 红色显示 + 抖动动画（参考earthworm） */
+/* 实现方案: 红色文字和下划线，淡红色背景，抖动动画 */
+/* 影响范围: frontend/src/components/DictationPage.css */
+/* 实现日期: 2025-12-10 */
+.sentence-word-box.error {
+  color: #ef4444 !important; /* 红色文字 */
+  border-bottom-color: #ef4444 !important; /* 红色下划线 */
+  border-bottom-width: 3px !important; /* 加粗下划线 */
+  background: rgba(239, 68, 68, 0.05); /* 淡红色背景 */
+}
+
+/* 修复模式下的错误单词添加抖动动画 */
+.sentence-word-box.error.shake {
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+/* 句子中的标点符号 */
+.sentence-punctuation {
+  font-size: inherit; /* 继承父元素的动态字体大小 */
+  font-weight: 600;
+  color: var(--text-primary);
+  height: auto;
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 4px;
+}
+
+/* 单个字符样式 - 无下划线 */
+.underscore-char {
+  display: inline-block;
+  min-width: 1.2ch; /* 根据字符宽度自适应 */
+  text-align: center;
+  padding-bottom: 4px;
+  transition: all 0.2s ease;
+  color: #999999; /* 未输入字符用灰色 */
+}
+
+/* 已输入的字符 - 显示为正常颜色 */
+.underscore-char:not(:empty) {
+  color: var(--text-primary); /* 输入的字符用正常颜色 */
+}
+
+/* 抖动动画 - 用于错误提示 */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-10px);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+  75% {
+    transform: translateX(-10px);
+  }
+}
+
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+/* ============================================
+   竞品级别的输入框设计
+   大字号 + 清晰反馈
+   ============================================ */
+
+.practice-input {
+  width: 100%;
+  padding: 24px 32px;
+  font-size: 2rem; /* 32px - 清晰易读 */
+  font-weight: 500;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--text-primary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+  letter-spacing: 1px;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.practice-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.4;
+  font-weight: 400;
+}
+
+/* 聚焦状态 */
+.practice-input:focus,
+.practice-input:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 正确状态 - 绿色 */
+.practice-input.correct {
+  color: var(--success-color) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* 错误状态 - 红色 + 抖动 */
+.practice-input.incorrect {
+  color: var(--error-color) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+/* ============================================
+   提示信息显示框
+   ============================================ */
+
+/* ============================================
+   提示信息显示框 - 灰色风格（无背景色）
+   ============================================ */
+
+.hint-display {
+  margin-top: 20px; /* 减少margin */
+  margin-bottom: 20px; /* 减少margin */
+  padding: 16px 20px; /* 减少padding */
+  background: transparent;
+  border-radius: 12px; /* 减小圆角 */
+  border: 2px dashed rgba(100, 116, 139, 0.4);
+  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: left;
+  box-shadow: 0 4px 16px rgba(100, 116, 139, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.hint-display::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, rgba(100, 116, 139, 0.6) 0%, rgba(71, 85, 105, 0.6) 100%);
+}
+
+.hint-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.hint-icon {
+  font-size: 24px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.hint-title {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.hint-word {
+  font-size: 20px;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  line-height: 1.7;
+  padding: 12px 16px;
+  background: rgba(100, 116, 139, 0.1);
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.hint-word strong {
+  color: #64748b;
+  margin-right: 10px;
+  font-weight: 700;
+}
+
+.hint-word-phonetic {
+  color: var(--text-secondary);
+  font-weight: 400;
+  font-family: 'Courier New', monospace;
+  margin-left: 8px;
+  font-size: 18px;
+}
+
+.hint-meaning {
+  font-size: 16px;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+  line-height: 1.7;
+}
+
+.hint-meaning strong {
+  color: #64748b;
+  margin-right: 8px;
+  font-weight: 700;
+}
+
+.hint-example {
+  font-size: 15px;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 14px 16px;
+  background: rgba(100, 116, 139, 0.06);
+  border-radius: 10px;
+  border-left: 4px solid #64748b;
+  line-height: 1.7;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hint-example strong {
+  color: #64748b;
+  margin-right: 8px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+/* 播放例句按钮 */
+.play-example-btn {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #64748b;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  outline: none;
+  margin-left: auto;
+}
+
+.play-example-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+}
+
+.play-example-btn:active {
+  transform: scale(0.95);
+}
+
+.play-example-btn svg {
+  width: 14px;
+  height: 14px;
+  margin-left: 2px;
+}
+
+/* 例句翻译样式 */
+.hint-translation {
+  font-size: 14px;
+  color: var(--text-secondary);
+  padding: 12px 16px;
+  background: rgba(100, 116, 139, 0.04);
+  border-radius: 8px;
+  line-height: 1.7;
+  margin-top: 8px;
+  font-style: normal;
+}
+
+.hint-translation strong {
+  color: #64748b;
+  margin-right: 8px;
+  font-weight: 700;
+}
+
+/* 深色模式下的提示框 */
+.dictation-page-overlay.dark .hint-display {
+  background: transparent;
+  box-shadow: 0 4px 16px rgba(100, 116, 139, 0.2);
+}
+
+.dictation-page-overlay.dark .hint-example {
+  background: rgba(100, 116, 139, 0.12);
+}
+
+/* 快捷键提示 */
+.shortcut-hint {
+  display: flex;
+  justify-content: center;
+  gap: 12px; /* 减少间距 */
+  margin-top: 12px; /* 减少margin */
+  padding-bottom: 16px; /* 大幅减少底部空间 */
+  flex-wrap: wrap;
+}
+
+.hint-item {
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding: 4px 12px;
+  background: var(--bg-color);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.hint-item:hover {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+/* ============================================
+   答案显示区域 - 竞品风格
+   ============================================ */
+
+.answer-display {
+  margin-top: 32px;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.03) 0%, rgba(59, 130, 246, 0.03) 100%);
+  border-radius: 16px;
+  border: 2px solid var(--border-color);
+  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* 答案提示区域 - 不覆盖横线，只显示提示信息 */
+.answer-tips {
+  margin-top: 16px; /* 减少margin */
+  padding: 16px 20px; /* 减少padding */
+  background: rgba(100, 116, 139, 0.04);
+  border-radius: 12px;
+  text-align: center;
+  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.answer-text {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  letter-spacing: 0.5px;
+}
+
+.answer-text.correct {
+  color: #10b981;
+  text-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.answer-text.incorrect {
+  color: #ef4444;
+  text-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+}
+
+.correct-answer {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 2px;
+}
+
+/* 句子答案高亮显示（标记错误单词） */
+.correct-answer-highlighted {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 2px;
+  line-height: 1.6;
+}
+
+/* 答案中的错误单词 - 红色高亮 */
+.correct-answer-highlighted .error-word {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  padding: 4px 8px;
+  border-radius: 0px;
+  margin: 0 4px;
+  display: inline-block;
+}
+
+/* 答案中的正确单词 - 正常颜色 */
+.correct-answer-highlighted .correct-word {
+  color: var(--text-primary);
+  margin: 0 4px;
+  display: inline-block;
+}
+
+.word-meaning {
+  font-size: 17px;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.word-example {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(16, 185, 129, 0.04);
+  border-radius: 12px;
+  border-left: 4px solid var(--accent-color);
+  text-align: left;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.word-example-translation {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+  padding: 12px 16px;
+  background: rgba(16, 185, 129, 0.02);
+  border-radius: 10px;
+  text-align: left;
+  font-style: normal;
+  line-height: 1.6;
+}
+
+.input-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* 减少间距 */
+  margin-top: 16px; /* 减少margin */
+}
+
+/* ============================================
+   按钮样式 - 竞品风格：现代圆角按钮
+   ============================================ */
+
+.action-btn {
+  /* 参考图1的按钮风格 - 有边框、图标、圆角 */
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1.5px solid #e5e7eb;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none !important;
+  letter-spacing: 0px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap; /* 不换行 */
+  line-height: 1.5;
+  min-height: 40px;
+  background: #ffffff;
+  color: #374151;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.action-btn:focus,
+.action-btn:focus-visible {
+  outline: none !important;
+}
+
+/* 主要按钮 - 绿色实心（参考Duolingo风格）*/
+.action-btn.primary {
+  background: #10b981;
+  color: white;
+  border: 1.5px solid #10b981;
+  font-weight: 600;
+}
+
+.action-btn.primary:hover:not(:disabled) {
+  background: #059669;
+  border-color: #10b981; /* 绿色边框 */
+}
+
+.action-btn.primary:active:not(:disabled) {
+  background: #047857;
+  border-color: #059669; /* 绿色边框 */
+}
+
+.action-btn.primary:disabled {
+  background: #d1fae5;
+  color: #6ee7b7;
+  border-color: #d1fae5;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* 次要按钮 - 白色背景、灰色边框 */
+.action-btn.secondary {
+  background: #ffffff;
+  color: #374151;
+  border: 1.5px solid #e5e7eb;
+}
+
+.action-btn.secondary:hover:not(:disabled) {
+  background: #f0fdf4;
+  border-color: #10b981; /* 绿色边框 */
+  color: #1f2937;
+}
+
+.action-btn.secondary:active:not(:disabled) {
+  background: #dcfce7;
+  border-color: #059669; /* 绿色边框 */
+}
+
+.action-btn.secondary svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ============================================
+   完成页面 - 竞品风格：优雅的统计展示
+   ============================================ */
+
+.dictation-result {
+  text-align: center;
+  max-width: 700px;
+  padding: 40px 20px;
+}
+
+.result-icon {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 40px;
+  animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0) rotate(-180deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.result-icon svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3));
+}
+
+.dictation-result h2 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0 0 48px 0;
+  color: var(--text-primary);
+  letter-spacing: 1px;
+}
+
+.result-stats {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  margin-bottom: 48px;
+}
+
+.stat-item {
+  text-align: center;
+  position: relative;
+  padding: 20px;
+}
+
+.stat-item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+  border-radius: 16px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stat-item:hover::before {
+  opacity: 1;
+}
+
+.stat-value {
+  font-size: 48px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.stat-label {
+  font-size: 15px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  position: relative;
+}
+
+.result-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* 空状态 */
+.dictation-empty {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+/* ============================================
+   震动反馈动画
+   ============================================ */
+
+/* 答对震动：轻微闪烁 + 缩放 */
+@keyframes vibrate-success {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  25% {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+  }
+  50% {
+    transform: scale(0.98);
+    filter: brightness(1);
+  }
+  75% {
+    transform: scale(1.03);
+    filter: brightness(1.08);
+  }
+}
+
+.vibrate-success {
+  animation: vibrate-success 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  box-shadow: 0 0 50px rgba(16, 185, 129, 0.5) !important;
+  transition: box-shadow 0.3s ease-out;
+}
+
+/* 答错震动：左右抖动 + 红色闪烁 */
+@keyframes vibrate-error {
+  0%, 100% {
+    transform: translateX(0) rotate(0deg);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-15px) rotate(-2deg);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(15px) rotate(2deg);
+  }
+}
+
+@keyframes flash-error {
+  0%, 100% {
+    filter: brightness(1);
+    background: transparent;
+  }
+  50% {
+    filter: brightness(0.9);
+    background: rgba(239, 68, 68, 0.05);
+  }
+}
+
+.vibrate-error {
+  animation:
+    vibrate-error 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97),
+    flash-error 0.6s ease-out;
+  box-shadow: 0 0 50px rgba(239, 68, 68, 0.6) !important;
+  transition: box-shadow 0.3s ease-out;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .dictation-header {
+    padding: 16px 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .dictation-title {
+    order: 3;
+    width: 100%;
+  }
+
+  .dictation-progress {
+    padding: 16px 20px;
+  }
+
+  .dictation-content {
+    padding: 20px;
+  }
+
+  .practice-item {
+    padding: 40px 24px;
+  }
+
+  .result-stats {
+    gap: 24px;
+  }
+}
+
+
+/* 深色模式下的按钮 */
+.dictation-page-overlay.dark .action-btn {
+  background: #1f2937;
+  color: #e5e7eb;
+  border-color: #374151;
+}
+
+.dictation-page-overlay.dark .action-btn.secondary {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.dictation-page-overlay.dark .action-btn.secondary:hover:not(:disabled) {
+  background: #374151;
+  border-color: #4b5563;
+  color: #f3f4f6;
+}
+
+.dictation-page-overlay.dark .action-btn.primary {
+  background: #10b981;
+  color: white;
+  border-color: #10b981;
+}
+
+.dictation-page-overlay.dark .action-btn.primary:hover:not(:disabled) {
+  background: #059669;
+  border-color: #059669;
+}
+
+/* 功能实现: 快捷键提示区域样式 - 按钮下方居中显示 */
+/* 实现日期: 2025-12-10 */
+.keyboard-shortcuts-hint {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px 20px;
+  margin-top: 16px;
+  padding: 10px 20px;
+  background: transparent;
+  font-size: 12px;
+  max-width: 100%;
+}
+
+.keyboard-shortcuts-hint .shortcut-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #9ca3af;
+  white-space: nowrap;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.keyboard-shortcuts-hint kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 7px;
+  font-size: 11px;
+  font-family: 'SF Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-weight: 600;
+  color: #6b7280;
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+  min-width: 24px;
+  min-height: 20px;
+  text-align: center;
+  letter-spacing: 0.3px;
+}
+
+/* 暗色模式下的快捷键提示 */
+.dictation-page-overlay.dark .keyboard-shortcuts-hint {
+  background: transparent;
+}
+
+.dictation-page-overlay.dark .keyboard-shortcuts-hint .shortcut-item {
+  color: #6b7280;
+}
+
+.dictation-page-overlay.dark .keyboard-shortcuts-hint kbd {
+  color: #9ca3af;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 移动端适配 - 朗读内容显示 */
+@media (max-width: 640px) {
+  .listening-content {
+    padding: 16px;
+    max-width: 100%;
+  }
+
+  .listening-sentence {
+    font-size: 18px;
+  }
+
+  .listening-translation {
+    font-size: 15px;
+  }
+
+  .listening-phonetic {
+    font-size: 16px;
+  }
+
+  .listening-meaning {
+    font-size: 15px;
+  }
+
+  .keyboard-shortcuts-hint {
+    gap: 10px;
+    padding: 8px 12px;
+    font-size: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .keyboard-shortcuts-hint .shortcut-item {
+    gap: 4px;
+    font-size: 10px;
+  }
+
+  .keyboard-shortcuts-hint kbd {
+    padding: 2px 6px;
+    font-size: 9px;
+    min-width: 22px;
+    min-height: 18px;
+  }
+}

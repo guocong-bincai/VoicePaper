@@ -1,0 +1,261 @@
+.level-badge {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+    background: transparent;
+    border-radius: 20px;
+    box-shadow: none;
+    backdrop-filter: none;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.badge-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+.badge-icon:hover {
+    transform: scale(1.08);
+}
+
+/* 光晕层 - 自然的发光效果，偏移到下方 */
+.badge-glow-layer {
+    position: absolute;
+    top: 60%;  /* 向下偏移 */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 140%;  /* 更大的范围 */
+    height: 120%;
+    border-radius: 50%;
+    z-index: 0;
+    opacity: 0.7;
+    filter: blur(25px);  /* 添加模糊效果，更自然 */
+    animation: pulse-glow 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(0.95);
+        filter: blur(20px);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1.1);
+        filter: blur(30px);
+    }
+}
+
+/* PNG图标样式 - 透明背景 */
+.badge-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: relative;
+    z-index: 2;
+    background: transparent !important;
+    transition: all 0.3s ease;
+}
+
+/* 不同尺寸 */
+.level-badge-small {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+.level-badge-small .badge-icon {
+    width: 32px;
+    height: 32px;
+}
+
+.level-badge-medium {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+.level-badge-medium .badge-icon {
+    width: 48px;
+    height: 48px;
+}
+
+/* Large尺寸 - 完全透明，无背景 */
+.level-badge-large {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    backdrop-filter: none;
+}
+
+.level-badge-large .badge-icon {
+    width: 80px;
+    height: 80px;
+}
+
+.level-badge-large .badge-label {
+    margin-top: 8px;
+    /* 文字添加阴影以提高可读性 */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3),
+                 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+/* 不同强度的光晕效果 */
+.glow-light .badge-glow-layer {
+    opacity: 0.4;
+    filter: blur(20px);
+}
+
+.glow-medium .badge-glow-layer {
+    opacity: 0.6;
+    filter: blur(25px);
+}
+
+.glow-strong .badge-glow-layer {
+    opacity: 0.8;
+    filter: blur(30px);
+}
+
+/* 传奇等级 - 彩虹光晕动画 */
+.badge-legendary .badge-glow-layer {
+    animation: rainbow-pulse 3s linear infinite;
+}
+
+.badge-legendary .badge-image {
+    animation: rainbow-filter 3s linear infinite;
+}
+
+@keyframes rainbow-pulse {
+    0% { 
+        box-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000, 0 0 60px #ff0000, 0 0 80px #ff0000;
+    }
+    16.6% { 
+        box-shadow: 0 0 20px #ffff00, 0 0 40px #ffff00, 0 0 60px #ffff00, 0 0 80px #ffff00;
+    }
+    33.3% { 
+        box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00, 0 0 60px #00ff00, 0 0 80px #00ff00;
+    }
+    50% { 
+        box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 60px #00ffff, 0 0 80px #00ffff;
+    }
+    66.6% { 
+        box-shadow: 0 0 20px #0000ff, 0 0 40px #0000ff, 0 0 60px #0000ff, 0 0 80px #0000ff;
+    }
+    83.3% { 
+        box-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff, 0 0 60px #ff00ff, 0 0 80px #ff00ff;
+    }
+    100% { 
+        box-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000, 0 0 60px #ff0000, 0 0 80px #ff0000;
+    }
+}
+
+@keyframes rainbow-filter {
+    0% { filter: drop-shadow(0 0 15px #ff0000); }
+    16.6% { filter: drop-shadow(0 0 15px #ffff00); }
+    33.3% { filter: drop-shadow(0 0 15px #00ff00); }
+    50% { filter: drop-shadow(0 0 15px #00ffff); }
+    66.6% { filter: drop-shadow(0 0 15px #0000ff); }
+    83.3% { filter: drop-shadow(0 0 15px #ff00ff); }
+    100% { filter: drop-shadow(0 0 15px #ff0000); }
+}
+
+/* 暗色主题下增强光晕 */
+[data-theme='dark'] .badge-glow-layer {
+    opacity: 1;
+}
+
+[data-theme='dark'] .badge-image {
+    filter: brightness(1.1);
+}
+
+/* 标签样式 */
+.badge-label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    text-align: center;
+}
+
+.badge-level {
+    font-size: 18px;
+    font-weight: 900;
+    color: #667eea;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3),
+                 0 0 8px rgba(255, 255, 255, 0.8),
+                 0 0 2px rgba(255, 255, 255, 1);
+}
+
+.badge-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #333;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3),
+                 0 0 8px rgba(255, 255, 255, 0.8),
+                 0 0 2px rgba(255, 255, 255, 1);
+}
+
+[data-theme='dark'] .badge-level {
+    color: #8b9cff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5),
+                 0 0 8px rgba(139, 156, 255, 0.5);
+}
+
+[data-theme='dark'] .badge-name {
+    color: #e5e5e5;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5),
+                 0 0 8px rgba(229, 229, 229, 0.3);
+}
+
+[data-theme='dark'] .badge-level {
+    color: var(--text-primary, #e5e5e5);
+}
+
+[data-theme='dark'] .badge-name {
+    color: var(--text-secondary, #999);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .level-badge-small .badge-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .level-badge-medium .badge-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .level-badge-large {
+        padding: 0;
+        background: transparent !important;
+    }
+
+    .level-badge-large .badge-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .badge-level {
+        font-size: 16px;
+    }
+
+    .badge-name {
+        font-size: 12px;
+    }
+}

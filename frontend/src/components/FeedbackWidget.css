@@ -1,0 +1,345 @@
+/* 弹窗遮罩 */
+.feedback-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.2s ease;
+  padding: 20px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 弹窗主体 */
+.feedback-modal {
+  background: var(--bg-color);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 头部 */
+.feedback-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.feedback-header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.feedback-header-content svg {
+  color: #667eea;
+}
+
+.feedback-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.feedback-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--text-color-secondary, #6b7280);
+  transition: all 0.2s ease;
+}
+
+.feedback-close:hover {
+  background: var(--hover-bg, #f3f4f6);
+  color: var(--text-color);
+}
+
+/* 表单 */
+.feedback-form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.feedback-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feedback-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.feedback-required {
+  color: #ef4444;
+}
+
+.feedback-optional {
+  font-weight: 400;
+  color: var(--text-color-secondary, #6b7280);
+}
+
+/* 问题类型选择 */
+.feedback-type-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.feedback-type-item {
+  padding: 16px;
+  background: var(--card-bg, #f9fafb);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.feedback-type-item:hover {
+  background: var(--hover-bg, #f3f4f6);
+  border-color: #667eea;
+}
+
+.feedback-type-item.active {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #667eea;
+}
+
+.feedback-type-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feedback-type-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.feedback-type-emoji {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.feedback-type-desc {
+  font-size: 12px;
+  color: var(--text-color-secondary, #6b7280);
+}
+
+/* 输入框 */
+.feedback-textarea,
+.feedback-input {
+  width: 100%;
+  padding: 12px;
+  background: var(--input-bg, #ffffff);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-color);
+  transition: all 0.2s ease;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.feedback-textarea:focus,
+.feedback-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.feedback-textarea::placeholder,
+.feedback-input::placeholder {
+  color: var(--text-color-secondary, #9ca3af);
+}
+
+/* 按钮 */
+.feedback-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.feedback-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.feedback-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.feedback-btn-cancel {
+  background: var(--cancel-bg, #f3f4f6);
+  color: var(--text-color-secondary, #6b7280);
+}
+
+.feedback-btn-cancel:hover:not(:disabled) {
+  background: var(--cancel-hover-bg, #e5e7eb);
+}
+
+.feedback-btn-submit {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.feedback-btn-submit:hover:not(:disabled) {
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  transform: translateY(-1px);
+}
+
+/* 加载动画 */
+.feedback-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 成功状态 */
+.feedback-success {
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.feedback-success-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  color: white;
+  margin-bottom: 24px;
+  animation: scaleIn 0.4s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.feedback-success h3 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.feedback-success p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-color-secondary, #6b7280);
+}
+
+/* 深色模式适配 */
+:root[data-theme='dark'] {
+  --bg-color: #1f2937;
+  --card-bg: #111827;
+  --input-bg: #111827;
+  --border-color: #374151;
+  --hover-bg: #374151;
+  --text-color: #f9fafb;
+  --text-color-secondary: #9ca3af;
+  --cancel-bg: #374151;
+  --cancel-hover-bg: #4b5563;
+}
+
+/* 响应式设计 */
+@media (max-width: 640px) {
+  .feedback-trigger {
+    right: 16px;
+    bottom: 80px;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .feedback-modal {
+    max-height: 95vh;
+    border-radius: 16px 16px 0 0;
+    margin-top: auto;
+  }
+
+  .feedback-type-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feedback-actions {
+    flex-direction: column-reverse;
+  }
+
+  .feedback-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

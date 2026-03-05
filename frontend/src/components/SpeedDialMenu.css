@@ -1,0 +1,262 @@
+/* 罗盘式径向菜单容器 */
+.radial-menu-container {
+  position: fixed;
+  right: 80px; /* 往左移动 */
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  width: 120px;
+  height: 120px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.radial-menu-container:hover {
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* 中心主按钮 - 定位朗读点 */
+.radial-main-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px; /* 从72px减小到64px */
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(160, 160, 160, 0.6); /* 默认灰色，透明度降低，更柔和 */
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10; /* 提高z-index，确保主按钮在最上层 */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  pointer-events: none; /* 让点击事件穿透到容器 */
+}
+
+.radial-main-btn.hovered {
+  background: rgba(254, 243, 199, 0.95); /* 触碰变黄色 */
+  color: #1A1A1A;
+  box-shadow: 0 6px 24px rgba(251, 191, 36, 0.6);
+}
+
+/* 按钮内容布局 */
+.btn-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+/* 按钮文字 */
+.btn-text {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.1;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* 箭头动画 */
+.btn-content svg {
+  width: 18px;
+  height: 18px;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+.radial-main-btn.hovered .btn-content svg {
+  animation: none;
+}
+
+/* 扇形分区 - 反馈（左上） */
+.sector-feedback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 120px;
+  height: 120px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1; /* 降低z-index，确保在主按钮下方 */
+}
+
+.sector-feedback.show {
+  opacity: 1;
+}
+
+/* 使用伪元素创建环形扇形（在主按钮外围） */
+/* 左上扇形：从270度（正左）到360度（正上），共90度 */
+.sector-feedback::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: conic-gradient(
+    from 270deg at 50% 50%,
+    rgba(160, 160, 160, 0.6) 0deg,
+    rgba(140, 140, 140, 0.6) 90deg,
+    transparent 90deg
+  );
+  border-radius: 50%;
+  /* 使用mask遮罩，挖空中心区域（主按钮大小：64/2=32px） */
+  -webkit-mask: radial-gradient(
+    circle at 50% 50%,
+    transparent 0,
+    transparent 32px, /* 匹配新的主按钮半径 */
+    black 32px,
+    black 100%
+  );
+  mask: radial-gradient(
+    circle at 50% 50%,
+    transparent 0,
+    transparent 32px,
+    black 32px,
+    black 100%
+  );
+  transition: all 0.2s ease;
+  z-index: 1;
+}
+
+/* 触碰反馈区域时的颜色变化 - 变黄色 */
+.sector-feedback.active::before {
+  background: conic-gradient(
+    from 270deg at 50% 50%,
+    rgba(254, 243, 199, 0.95) 0deg,
+    rgba(251, 191, 36, 0.95) 90deg,
+    transparent 90deg
+  );
+}
+
+/* 扇形区域内的图标 */
+/* 扇形中心在315度方向（左上45度），放在扇形中间 */
+.sector-icon {
+  position: absolute;
+  /* 放在扇形边缘的中间位置 */
+  top: 15px; /* 调整到扇形中间 */
+  left: 15px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  background: transparent;
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+  z-index: 2; /* 降低z-index，确保在主按钮下方 */
+}
+
+.sector-icon svg {
+  width: 18px;
+  height: 18px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.sector-feedback.show .sector-icon {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0.1s;
+}
+
+
+/* 深色模式 */
+:root[data-theme='dark'] .radial-main-btn {
+  background: rgba(100, 100, 100, 0.6); /* 深色模式下的灰色，更透明 */
+  color: white;
+}
+
+:root[data-theme='dark'] .radial-main-btn.hovered {
+  background: rgba(254, 243, 199, 0.95); /* 触碰变黄色 */
+  color: #1A1A1A;
+}
+
+:root[data-theme='dark'] .sector-icon {
+  background: #374151;
+  color: #667eea;
+}
+
+
+/* 响应式设计 */
+@media (max-width: 640px) {
+  .radial-menu-container {
+    right: 60px; /* 移动端也往左移 */
+    width: 100px;
+    height: 100px;
+  }
+
+  .radial-main-btn {
+    width: 56px; /* 移动端也相应减小 */
+    height: 56px;
+  }
+
+  .sector-feedback {
+    width: 100px;
+    height: 100px;
+  }
+
+  .sector-icon {
+    top: 8px; /* 移动端图标也调整到扇形中间 */
+    left: 8px;
+    width: 24px; /* 移动端图标稍微小一点 */
+    height: 24px;
+  }
+
+  .sector-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .btn-text {
+    font-size: 9px;
+  }
+
+  .btn-content svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* 入场动画 */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px) translateY(-50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(-50%);
+  }
+}
+
+.radial-menu-container {
+  animation: slideInFromRight 0.4s ease-out;
+}
+
+/* 点击反馈效果 */
+.radial-menu-container:active {
+  transform: translateY(-50%) scale(0.98);
+}
+
+/* 扇形区域悬停效果 */
+.radial-menu-container:hover .sector-feedback::before {
+  filter: brightness(1.1);
+}

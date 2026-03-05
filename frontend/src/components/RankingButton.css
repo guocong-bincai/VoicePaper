@@ -1,0 +1,397 @@
+/* 排名按钮 */
+.ranking-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.ranking-button:hover {
+  background: var(--hover-bg);
+}
+
+.ranking-button.ranking-loading {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ranking-btn-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.ranking-label {
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.ranking-number {
+  font-weight: 700;
+  color: #d946ef;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+/* 排名弹窗 */
+.ranking-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 99999;
+  animation: fadeIn 0.2s ease;
+  padding: 20px;
+  padding-top: 80px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.ranking-modal-content {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  max-width: 540px;
+  width: 90%;
+  height: auto;
+  max-height: calc(100vh - 160px);
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(217, 70, 239, 0.2) inset;
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 2px solid rgba(217, 70, 239, 0.3);
+  margin: 0 auto;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close-btn:hover {
+  color: var(--text-primary);
+  background: var(--hover-bg);
+  border-radius: 6px;
+}
+
+.modal-loading,
+.modal-error {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.modal-error {
+  color: #dc2626;
+}
+
+/* 排名弹窗正文 */
+.ranking-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: visible;
+}
+
+/* 标题 */
+.modal-title-section {
+  text-align: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e5e5;
+  flex-shrink: 0;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+/* 前5名排行榜 */
+.top-rankings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.top-rankings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: visible;
+}
+
+.top-ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.top-ranking-item:hover {
+  background: linear-gradient(135deg, rgba(217, 70, 239, 0.08), rgba(217, 70, 239, 0.04));
+  transform: translateX(4px);
+}
+
+.top-ranking-item.current-user {
+  background: linear-gradient(135deg, rgba(217, 70, 239, 0.15), rgba(217, 70, 239, 0.08));
+  border: 2px solid rgba(217, 70, 239, 0.3);
+}
+
+.ranking-position {
+  min-width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-avatar-container {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.user-ranking-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.top-ranking-item.current-user .user-ranking-avatar {
+  border-color: #d946ef;
+}
+
+.rank-medal-large,
+.rank-number-large {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #d946ef;
+  font-size: 16px;
+}
+
+.rank-medal-large {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.user-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.user-score-small {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.user-score-large {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: #d946ef !important;
+  min-width: 70px;
+  text-align: right;
+}
+
+/* 其他排名 */
+.your-ranking-section {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.divider {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 8px 0;
+}
+
+.your-ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(217, 70, 239, 0.1), rgba(217, 70, 239, 0.05));
+  border-left: 3px solid #d946ef;
+  border-radius: 6px;
+}
+
+.your-rank {
+  font-weight: 700;
+  color: #d946ef;
+  font-size: 16px;
+  min-width: 50px;
+}
+
+.your-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.your-score {
+  font-size: 16px;
+  font-weight: 700;
+  color: #d946ef;
+  min-width: 70px;
+  text-align: right;
+}
+
+/* 你的统计数据 */
+.your-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e5e5e5;
+  flex-shrink: 0;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px;
+  background: #f5f5f5;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #888;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 32px !important;
+  font-weight: 700 !important;
+  color: #d946ef !important;
+  line-height: 1.2;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  justify-content: center;
+}
+
+.stat-value .stat-unit {
+  font-size: 20px !important;
+  font-weight: 500 !important;
+  color: #d946ef !important;
+  opacity: 0.8;
+}
+
+/* 深色主题适配 */
+[data-theme="dark"] .ranking-modal-content {
+  background: #2a2a2a;
+}
+
+[data-theme="dark"] .top-ranking-item,
+[data-theme="dark"] .stat-item {
+  background: #333;
+}
+
+[data-theme="dark"] .your-ranking-item {
+  background: linear-gradient(135deg, rgba(217, 70, 239, 0.15), rgba(217, 70, 239, 0.08));
+}
+
+/* 响应式 */
+@media (max-width: 600px) {
+  .ranking-modal-content {
+    max-width: 95%;
+    padding: 16px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+  }
+
+  .top-ranking-item {
+    padding: 12px;
+  }
+
+  .user-score-large {
+    font-size: 18px !important;
+    min-width: 60px;
+  }
+
+  .your-stats {
+    grid-template-columns: 1fr;
+  }
+}

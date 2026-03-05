@@ -1,0 +1,435 @@
+/* 首页样式 - 大气高端设计 */
+
+.landing-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+}
+
+/* 背景装饰 */
+.landing-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bg-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #F9F8F6 0%, #f5f4f2 50%, #F9F8F6 100%);
+  z-index: 1;
+}
+
+.bg-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(156, 163, 175, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(156, 163, 175, 0.02) 0%, transparent 50%);
+  z-index: 2;
+  animation: patternMove 20s ease-in-out infinite;
+}
+
+@keyframes patternMove {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-10px, -10px);
+  }
+}
+
+/* 顶部导航 */
+.landing-nav {
+  position: relative;
+  z-index: 10;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: none;
+}
+
+.landing-nav-content {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.landing-logo {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+.landing-logo-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.landing-logo-btn:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+.landing-logo-btn:active {
+  transform: scale(0.98);
+}
+
+.landing-logo .dot {
+  color: var(--accent-color);
+  transition: color 0.3s ease;
+}
+
+.landing-nav-buttons {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  background: transparent;
+  padding: 0;
+  border: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+.nav-btn {
+  padding: 10px 24px !important;
+  border-radius: 6px;
+  font-size: 15px !important;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  background: transparent;
+  white-space: nowrap;
+  line-height: 1;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  min-height: 40px !important;
+  height: auto !important;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.02em;
+}
+
+.login-btn {
+  color: var(--text-primary) !important;
+  background: transparent !important;
+}
+
+.login-btn:hover {
+  background: rgba(0, 0, 0, 0.03) !important;
+}
+
+.register-btn {
+  background: #3f3f46 !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.register-btn:hover {
+  background: #18181b !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+  transform: translateY(-1px);
+}
+
+.login-btn:active, .register-btn:active {
+  transform: translateY(0);
+}
+
+/* 主内容区 */
+.landing-content {
+  position: relative;
+  z-index: 5;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 40px;
+  min-height: 0;
+}
+
+.landing-hero {
+  text-align: center;
+  max-width: 900px;
+  animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 主Slogan */
+.landing-slogan-cn {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 72px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 28px 0;
+  line-height: 1.2;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, #1A1A1A 0%, #4A4A4A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.landing-divider {
+  width: 100px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+  margin: 36px auto;
+  animation: expandDivider 1.5s ease-out 0.5s both;
+}
+
+@keyframes expandDivider {
+  from {
+    width: 0;
+    opacity: 0;
+  }
+  to {
+    width: 80px;
+    opacity: 1;
+  }
+}
+
+.landing-slogan-en {
+  font-family: 'Inter', sans-serif;
+  font-size: 48px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 24px 0;
+  letter-spacing: -0.5px;
+  opacity: 0.9;
+}
+
+.landing-subtitle {
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  color: var(--text-secondary);
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+/* 装饰元素 */
+.landing-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.landing-decoration .decoration-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(156, 163, 175, 0.08) 0%, transparent 70%);
+  animation: float 15s ease-in-out infinite;
+  display: none; /* 隐藏登录注册页面的装饰小球 */
+}
+
+.circle-1 {
+  width: 300px;
+  height: 300px;
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.circle-2 {
+  width: 200px;
+  height: 200px;
+  top: 60%;
+  right: 15%;
+  animation-delay: 5s;
+}
+
+.circle-3 {
+  width: 150px;
+  height: 150px;
+  bottom: 20%;
+  left: 20%;
+  animation-delay: 10s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(30px, -30px) scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* 底部信息 */
+.landing-footer {
+  position: relative;
+  z-index: 10;
+  padding: 24px 60px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.landing-footer p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+  font-style: italic;
+  letter-spacing: 0.5px;
+}
+
+/* 深色模式支持 */
+[data-theme="dark"] .landing-page {
+  background: linear-gradient(135deg, #1F2937 0%, #111827 50%, #1F2937 100%);
+}
+
+[data-theme="dark"] .bg-gradient {
+  background: linear-gradient(135deg, #1F2937 0%, #111827 50%, #1F2937 100%);
+}
+
+[data-theme="dark"] .landing-nav {
+  background: transparent;
+  border-bottom: none;
+}
+
+[data-theme="dark"] .landing-slogan-cn {
+  background: linear-gradient(135deg, #F9FAFB 0%, #D1D5DB 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme="dark"] .landing-nav-buttons {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .login-btn:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-theme="dark"] .cta-btn.secondary {
+  background: var(--paper-color);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .landing-footer {
+  background: transparent;
+  border-top: none;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .landing-nav {
+    padding: 20px 32px;
+  }
+
+  .landing-nav-content {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .landing-nav-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .landing-nav-buttons .nav-btn {
+    flex: 1;
+    max-width: 140px;
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+    min-height: 40px !important;
+  }
+
+  .landing-content {
+    padding: 0 24px;
+  }
+
+  .landing-slogan-cn {
+    font-size: 48px;
+  }
+
+  .landing-slogan-en {
+    font-size: 32px;
+  }
+
+  .landing-subtitle {
+    font-size: 16px;
+  }
+
+  .landing-footer {
+    padding: 20px 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing-nav {
+    padding: 20px 24px;
+  }
+
+  .landing-slogan-cn {
+    font-size: 40px;
+  }
+
+  .landing-slogan-en {
+    font-size: 26px;
+  }
+
+  .landing-subtitle {
+    font-size: 14px;
+  }
+
+  .landing-footer {
+    padding: 20px 24px;
+  }
+}
+

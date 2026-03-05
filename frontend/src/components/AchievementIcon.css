@@ -1,0 +1,241 @@
+.achievement-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+    /* 确保容器背景透明 */
+    background: transparent;
+}
+
+.icon-wrapper:hover {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.achievement-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.icon-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    z-index: 1;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.6;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+}
+
+/* 锁定状态 */
+.icon-wrapper.locked {
+    opacity: 0.3;
+    filter: grayscale(100%);
+}
+
+.lock-icon {
+    font-size: 100%;
+    opacity: 0.5;
+}
+
+/* 不同尺寸 */
+.achievement-icon-small .icon-wrapper {
+    width: 48px;
+    height: 48px;
+}
+
+.achievement-icon-medium .icon-wrapper {
+    width: 64px;
+    height: 64px;
+}
+
+.achievement-icon-large .icon-wrapper {
+    width: 80px;
+    height: 80px;
+}
+
+/* 不同稀有度的颜色滤镜 - 增强区分度 */
+
+/* 普通称号的多种颜色变体 */
+/* 青绿色变体 */
+.icon-common-teal .achievement-image {
+    filter: sepia(20%) hue-rotate(130deg) saturate(2) brightness(1.1) drop-shadow(0 4px 10px rgba(32, 178, 170, 0.8));
+}
+.icon-common-teal .icon-glow {
+    background: radial-gradient(circle, rgba(32, 178, 170, 0.5) 0%, transparent 70%);
+}
+
+/* 珊瑚红变体 */
+.icon-common-coral .achievement-image {
+    filter: sepia(30%) hue-rotate(-20deg) saturate(2.5) brightness(1.1) drop-shadow(0 4px 10px rgba(255, 107, 107, 0.8));
+}
+.icon-common-coral .icon-glow {
+    background: radial-gradient(circle, rgba(255, 107, 107, 0.5) 0%, transparent 70%);
+}
+
+/* 薄荷绿变体 */
+.icon-common-mint .achievement-image {
+    filter: sepia(20%) hue-rotate(140deg) saturate(2) brightness(1.15) drop-shadow(0 4px 10px rgba(78, 205, 196, 0.8));
+}
+.icon-common-mint .icon-glow {
+    background: radial-gradient(circle, rgba(78, 205, 196, 0.5) 0%, transparent 70%);
+}
+
+/* 暖棕色变体 */
+.icon-common-brown .achievement-image {
+    filter: sepia(50%) hue-rotate(10deg) saturate(1.5) brightness(1.05) drop-shadow(0 4px 10px rgba(139, 115, 85, 0.8));
+}
+.icon-common-brown .icon-glow {
+    background: radial-gradient(circle, rgba(139, 115, 85, 0.5) 0%, transparent 70%);
+}
+
+/* 橄榄绿变体 */
+.icon-common-olive .achievement-image {
+    filter: sepia(30%) hue-rotate(50deg) saturate(2) brightness(1.1) drop-shadow(0 4px 10px rgba(124, 179, 66, 0.8));
+}
+.icon-common-olive .icon-glow {
+    background: radial-gradient(circle, rgba(124, 179, 66, 0.5) 0%, transparent 70%);
+}
+
+/* 青绿色变体 */
+.icon-common-cyan .achievement-image {
+    filter: sepia(20%) hue-rotate(100deg) saturate(2.5) brightness(1.2) drop-shadow(0 4px 10px rgba(67, 233, 123, 0.8));
+}
+.icon-common-cyan .icon-glow {
+    background: radial-gradient(circle, rgba(67, 233, 123, 0.5) 0%, transparent 70%);
+}
+
+.icon-common .achievement-image {
+    filter: grayscale(40%) brightness(0.95) drop-shadow(0 4px 10px rgba(128, 128, 128, 0.8));
+}
+
+/* 普通品质灰色光晕 */
+.icon-common .icon-glow {
+    background: radial-gradient(circle, rgba(128, 128, 128, 0.4) 0%, transparent 70%);
+}
+
+.icon-rare .achievement-image {
+    filter: sepia(30%) hue-rotate(180deg) saturate(3) brightness(1.15) drop-shadow(0 4px 15px rgba(0, 140, 255, 1));
+}
+
+/* 稀有品质蓝色光晕 */
+.icon-rare .icon-glow {
+    background: radial-gradient(circle, rgba(0, 112, 221, 0.5) 0%, transparent 70%);
+}
+
+.icon-epic .achievement-image {
+    filter: sepia(60%) hue-rotate(260deg) saturate(3) brightness(1.25) drop-shadow(0 4px 18px rgba(163, 53, 238, 1));
+}
+
+/* 史诗品质紫色光晕 */
+.icon-epic .icon-glow {
+    background: radial-gradient(circle, rgba(163, 53, 238, 0.5) 0%, transparent 70%);
+}
+
+.icon-legendary .achievement-image {
+    animation: rainbow 3s linear infinite;
+    filter: brightness(1.4) contrast(1.3) saturate(2) drop-shadow(0 4px 20px rgba(255, 180, 0, 1));
+}
+
+/* 传说品质金色光晕 */
+.icon-legendary .icon-glow {
+    background: radial-gradient(circle, rgba(255, 180, 0, 0.6) 0%, transparent 70%);
+    animation: legendaryPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes legendaryPulse {
+    0%, 100% {
+        opacity: 0.7;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+}
+
+@keyframes rainbow {
+    0% {
+        filter: hue-rotate(0deg) brightness(1.3) contrast(1.3) saturate(2) drop-shadow(0 4px 16px rgba(255, 0, 0, 0.8));
+    }
+    16.6% {
+        filter: hue-rotate(60deg) brightness(1.3) contrast(1.3) saturate(2) drop-shadow(0 4px 16px rgba(255, 255, 0, 0.8));
+    }
+    33.3% {
+        filter: hue-rotate(120deg) brightness(1.3) contrast(1.3) saturate(2) drop-shadow(0 4px 16px rgba(0, 255, 0, 0.8));
+    }
+    50% {
+        filter: hue-rotate(180deg) brightness(1.3) contrast(1.3) saturate(2) drop-shadow(0 4px 16px rgba(0, 255, 255, 0.8));
+    }
+    66.6% {
+        filter: hue-rotate(240deg) brightness(1.3) contrast(1.3) saturate(2) drop-shadow(0 4px 16px rgba(0, 0, 255, 0.8));
+    }
+    83.3% {
+        filter: hue-rotate(300deg) brightness(1.3) contrast(1.3) saturate(2) drop-shadow(0 4px 16px rgba(255, 0, 255, 0.8));
+    }
+    100% {
+        filter: hue-rotate(360deg) brightness(1.3) contrast(1.3) saturate(2) drop-shadow(0 4px 16px rgba(255, 0, 0, 0.8));
+    }
+}
+
+/* 暗色主题下让图标更亮 */
+[data-theme='dark'] .achievement-image {
+    filter: brightness(1.2) drop-shadow(0 4px 8px rgba(255, 255, 255, 0.3));
+}
+
+[data-theme='dark'] .icon-common .achievement-image {
+    filter: grayscale(40%) brightness(1.2) drop-shadow(0 4px 12px rgba(180, 180, 180, 0.8));
+}
+
+[data-theme='dark'] .icon-rare .achievement-image {
+    filter: sepia(30%) hue-rotate(180deg) saturate(3) brightness(1.4) drop-shadow(0 4px 18px rgba(100, 180, 255, 1));
+}
+
+[data-theme='dark'] .icon-epic .achievement-image {
+    filter: sepia(60%) hue-rotate(260deg) saturate(3) brightness(1.5) drop-shadow(0 4px 20px rgba(200, 100, 255, 1));
+}
+
+[data-theme='dark'] .icon-legendary .achievement-image {
+    filter: brightness(1.6) contrast(1.4) saturate(2.5) drop-shadow(0 4px 24px rgba(255, 200, 0, 1));
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .achievement-icon-small .icon-wrapper {
+        width: 40px;
+        height: 40px;
+    }
+
+    .achievement-icon-medium .icon-wrapper {
+        width: 56px;
+        height: 56px;
+    }
+
+    .achievement-icon-large .icon-wrapper {
+        width: 72px;
+        height: 72px;
+    }
+}

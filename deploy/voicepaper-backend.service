@@ -1,0 +1,26 @@
+# VoicePaper Backend Systemd Service
+# 放置位置: /etc/systemd/system/voicepaper-backend.service
+
+[Unit]
+Description=VoicePaper Backend Service
+After=network.target mysql.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/voicepaper/backend
+ExecStart=/opt/voicepaper/backend/server
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# 环境变量（可选）
+Environment="GIN_MODE=release"
+
+# 资源限制
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
+

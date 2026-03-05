@@ -1,0 +1,521 @@
+/* 现代简洁风格 - 积分和签到组件 */
+.quick-points-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    position: relative;
+}
+
+/* 积分显示 - 简洁胶囊风格 */
+.quick-points-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px 6px 12px; /* 右侧增加padding确保数字完整显示 */
+    background: rgba(59, 130, 246, 0.08);
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    flex-shrink: 0; /* 防止被压缩 */
+    overflow: visible; /* 确保内容不被裁剪 */
+    min-width: fit-content; /* 根据内容自适应最小宽度 */
+}
+
+.quick-points-info:hover {
+    background: rgba(59, 130, 246, 0.12);
+}
+
+.quick-points-value {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* 增加图标和数字间距 */
+    flex-shrink: 0; /* 防止被压缩 */
+    overflow: visible; /* 确保内容不被裁剪 */
+}
+
+.points-icon {
+    font-size: 14px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.points-icon-img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.points-number {
+    font-size: 15px;
+    font-weight: 700;
+    color: #3b82f6;
+    line-height: 1;
+    white-space: nowrap; /* 防止换行 */
+    min-width: max-content; /* 根据内容自动扩展 */
+    display: inline-block; /* 确保宽度正确计算 */
+    letter-spacing: 0.5px; /* 增加字符间距提高可读性 */
+}
+
+[data-theme='dark'] .points-number {
+    color: #60a5fa;
+}
+
+.quick-points-label {
+    display: none; /* 隐藏标签，更简洁 */
+}
+
+/* 签到按钮 - 现代胶囊风格 */
+.quick-checkin-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    border: none;
+    border-radius: 20px;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+    min-width: auto;
+    white-space: nowrap;
+}
+
+.quick-checkin-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+    background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+}
+
+.quick-checkin-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.quick-checkin-btn:disabled {
+    cursor: default;
+}
+
+/* 已签到状态 - 柔和的绿色 */
+.quick-checkin-btn.checked {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.quick-checkin-btn.checked:hover:not(:disabled) {
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+    transform: translateY(-1px);
+}
+
+.quick-checkin-btn.loading {
+    background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+    box-shadow: 0 2px 6px rgba(156, 163, 175, 0.25);
+}
+
+.checkin-icon {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.checkin-icon-img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+.checkin-text {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.checkin-days {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.checkin-loading {
+    font-size: 14px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* 签到成功提示 - 更简洁 */
+.quick-checkin-success {
+    position: absolute;
+    top: -32px;
+    right: 0;
+    padding: 6px 10px;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 16px;
+    box-shadow: 0 3px 10px rgba(245, 158, 11, 0.35);
+    animation: bounceIn 0.4s ease, fadeOut 0.4s ease 1.5s forwards;
+    z-index: 10;
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0) translateY(10px);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.1) translateY(0);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .quick-points-card {
+        gap: 6px;
+    }
+
+    .quick-points-info {
+        padding: 5px 10px;
+        gap: 4px;
+    }
+
+    .points-icon {
+        font-size: 12px;
+    }
+
+    .points-icon-img {
+        width: 14px;
+        height: 14px;
+    }
+
+    .points-number {
+        font-size: 14px;
+    }
+
+    .quick-checkin-btn {
+        padding: 5px 12px;
+        font-size: 12px;
+    }
+
+    .checkin-icon {
+        font-size: 12px;
+    }
+
+    .checkin-icon-img {
+        width: 14px;
+        height: 14px;
+    }
+
+    .checkin-text {
+        display: none;
+    }
+
+    .checkin-days {
+        font-size: 12px;
+    }
+}
+
+/* 暗色主题适配 */
+[data-theme='dark'] .quick-points-info {
+    background: rgba(96, 165, 250, 0.15);
+}
+
+[data-theme='dark'] .quick-points-info:hover {
+    background: rgba(96, 165, 250, 0.2);
+}
+
+[data-theme='dark'] .quick-checkin-btn {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+[data-theme='dark'] .quick-checkin-btn.checked {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+}
+
+/* 签到按钮容器 */
+.checkin-wrapper {
+    position: relative;
+}
+
+/* 签到日历弹窗 */
+.checkin-calendar-popup {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 280px;
+    background: var(--paper-color, #ffffff);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    z-index: 1000;
+    animation: slideDown 0.2s ease;
+}
+
+[data-theme='dark'] .checkin-calendar-popup {
+    background: #1f2937;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.calendar-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary, #1a1a1a);
+}
+
+.calendar-stats {
+    font-size: 12px;
+    color: var(--text-secondary, #666);
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    margin-bottom: 8px;
+}
+
+.calendar-weekdays span {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary, #999);
+    padding: 4px 0;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.calendar-loading {
+    grid-column: span 7;
+    text-align: center;
+    padding: 20px;
+    color: var(--text-secondary, #999);
+    font-size: 13px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary, #333);
+    border-radius: 8px;
+    position: relative;
+    transition: all 0.15s ease;
+}
+
+.calendar-day.empty {
+    visibility: hidden;
+}
+
+.calendar-day.future {
+    color: var(--text-secondary, #ccc);
+}
+
+.calendar-day.today {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    font-weight: 700;
+}
+
+.calendar-day.checked {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+    font-weight: 600;
+}
+
+.calendar-day .check-mark {
+    position: absolute;
+    bottom: 1px;
+    right: 2px;
+    font-size: 8px;
+    opacity: 0.9;
+}
+
+.calendar-footer {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color, #e5e7eb);
+    text-align: center;
+}
+
+.streak-info {
+    font-size: 13px;
+    font-weight: 600;
+    color: #f59e0b;
+}
+
+/* 小三角箭头 */
+.checkin-calendar-popup::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: 20px;
+    width: 12px;
+    height: 12px;
+    background: var(--paper-color, #ffffff);
+    transform: rotate(45deg);
+    border-radius: 2px;
+}
+
+[data-theme='dark'] .checkin-calendar-popup::before {
+    background: #1f2937;
+}
+
+/* 补签卡相关样式 */
+.calendar-day.can-makeup {
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px dashed #f59e0b;
+    color: #d97706;
+}
+
+.calendar-day.can-makeup:hover {
+    background: rgba(245, 158, 11, 0.25);
+    transform: scale(1.05);
+}
+
+.makeup-icon {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    transform: rotate(-15deg);
+    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.25));
+    z-index: 1;
+}
+
+.calendar-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.makeup-card-info {
+    font-size: 12px;
+    color: #f59e0b;
+    font-weight: 500;
+}
+
+.makeup-card-info:hover {
+    color: #d97706;
+}
+
+/* 购买补签卡弹窗 */
+.buy-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    z-index: 10;
+}
+
+.buy-modal-content {
+    background: var(--paper-color, #ffffff);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    min-width: 200px;
+}
+
+[data-theme='dark'] .buy-modal-content {
+    background: #374151;
+}
+
+.buy-modal-content h3 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary, #1a1a1a);
+}
+
+.buy-modal-content p {
+    margin: 6px 0;
+    font-size: 13px;
+    color: var(--text-secondary, #666);
+}
+
+.buy-modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    justify-content: center;
+}
+
+.buy-modal-actions .cancel-btn {
+    padding: 8px 16px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    background: transparent;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-secondary, #666);
+}
+
+.buy-modal-actions .buy-btn {
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.buy-modal-actions .buy-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.buy-modal-actions .buy-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+}

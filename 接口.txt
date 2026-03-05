@@ -1,0 +1,684 @@
+# 📊 VoicePaper API 接口文档
+
+**文档版本**: 1.1.0
+**生成日期**: 2025-12-23
+**基础 URL**:
+- 开发环境: `http://localhost:8080/api/v1`
+- 生产环境: `https://voicepaper.online/api/v1`
+
+---
+
+## 📋 目录
+
+1.  **[认证模块 (Auth)](#1-认证模块-auth)**
+2.  **[文章模块 (Articles)](#2-文章模块-articles)**
+3.  **[单词书模块 (Wordbooks)](#3-单词书模块-wordbooks)**
+4.  **[生词本模块 (Vocabulary)](#4-生词本模块-vocabulary)**
+5.  **[听写练习模块 (Dictation)](#5-听写练习模块-dictation)**
+6.  **[阅读进度模块 (Reading Progress)](#6-阅读进度模块-reading-progress)**
+7.  **[积分与排行模块 (Points & Ranking)](#7-积分与排行模块-points--ranking)**
+8.  **[学习时长模块 (Duration)](#8-学习时长模块-duration)**
+9.  **[其他模块 (Others)](#9-其他模块-others)**
+10. **[💡 前端核心逻辑说明](#-前端核心逻辑说明)**
+
+---
+
+## 1. 认证模块 (Auth)
+
+该模块处理用户注册、登录、个人信息管理。
+
+### 1.1 邮箱验证码登录/注册
+`POST /auth/email/login`
+
+*   **功能**: 用户通过邮箱验证码登录。如果邮箱不存在，会自动注册。通常是主要的登录方式。
+*   **请求参数 (JSON)**:
+    *   `email` (string, required): 用户邮箱地址。
+    *   `code` (string, required): 收到的验证码。
+*   **响应 (JSON)**:
+    ```json
+    {
+      "token": "eyJhbGciOiJIUzI1...", // JWT 认证 Token
+      "user": {
+        "id": 1,
+        "email": "user@example.com",
+        "nickname": "VoicePaper User"
+      },
+      "message": "登录成功"
+    }
+    ```
+
+### 1.2 发送邮箱验证码
+`POST /auth/email/send`
+
+*   **功能**: 向指定邮箱发送验证码。
+*   **请求参数 (JSON)**:
+    *   `email` (string, required): 目标邮箱。
+    *   `purpose` (string, optional): 用途，默认为 `login`。
+*   **响应**: `{"message": "验证码发送成功"}`
+
+### 1.3 密码登录
+`POST /auth/password/login`
+
+*   **功能**: 用户通过密码登录（管理员或老用户）。
+*   **请求**: `email`, `password`。
+*   **响应**: 同 1.1。
+
+### 1.4 获取当前用户信息
+`GET /auth/me`
+*   **认证**: Required
+*   **功能**: 获取当前登录用户的详细信息。通常在应用启动时调用以恢复会话。
+*   **响应**:
+    ```json
+    {
+      "user": {
+        "id": 1,
+        "nickname": "User",
+        "email": "user@example.com",
+        "avatar": "https://oss...", // 头像URL
+        "level": 3,                 // 用户等级
+        "points": 1250,             // 当前积分
+        "equipped_title": {         // 当前佩戴的称号
+           "name": "进士",
+           "rarity": "rare"
+        }
+      }
+    }
+    ```
+
+### 1.5 更新个人资料
+`PUT /auth/profile`
+*   **认证**: Required
+*   **请求**: `nickname`, `avatar`, `bio`。
+
+### 1.6 上传头像
+`POST /auth/avatar/upload`
+*   **认证**: Required
+*   **功能**: 上传图片文件作为头像。
+*   **请求 (FormData)**: `avatar` (file)。
+*   **响应**: `{"avatar_url": "..."}`
+
+---
+
+## 2. 文章模块 (Articles)
+
+该模块提供精读文章的内容、音频和时间轴数据。
+
+### 2.1 获取文章列表
+`GET /articles`
+
+*   **功能**: 获取所有可用的文章列表。
+*   **响应**: 文章对象数组。
+
+### 2.2 获取文章详情
+`GET /articles/:id`
+
+*   **功能**: 获取单篇文章的完整内容。
+*   **响应**:
+    ```json
+    {
+      "id": 101,
+      "title": "The Future of AI",
+      "content": "# Markdown Content...", // 文章正文
+      "audio_url": "https://oss...",      // 配套音频地址
+      "timeline_url": "https://oss...",   // 时间轴数据地址
+      "words": [],                        // 重点单词列表
+      "sentences": []                     // 句子列表
+    }
+    ```
+
+### 2.3 获取文章时间轴 (高亮核心)
+`GET /articles/:id/timeline`
+
+*   **功能**: 获取文章的时间轴数据，用于音频播放时的高亮同步。
+*   **响应**: JSON 数组。
+    ```json
+    [
+      {
+        "text": "Artificial Intelligence is changing the world.",
+        "time_begin": 100,   // 开始时间 (ms)
+        "time_end": 3500,    // 结束时间 (ms)
+        "text_begin": 0,     // 文本开始字符索引
+        "text_end": 45       // 文本结束字符索引
+      }
+    ]
+    ```
+
+### 2.4 获取文章重点单词
+`GET /articles/:id/words`
+
+*   **功能**: 获取该文章标记的重点词汇。
+
+### 2.5 获取文章句子
+`GET /articles/:id/sentences`
+
+*   **功能**: 获取文章的所有句子列表（用于句子听写）。
+
+---
+
+## 3. 单词书模块 (Wordbooks)
+
+管理各类考试单词书（CET4, TOEFL 等）。
+
+### 3.1 获取单词书列表
+`GET /wordbooks`
+
+*   **响应**:
+    ```json
+    [
+      {
+        "type": "cet4",
+        "name": "大学英语四级",
+        "cover_url": "https://oss...",
+        "word_count": 4500,
+        "is_active": true
+      }
+    ]
+    ```
+
+### 3.2 获取单词书内容
+`GET /wordbooks/:type/words`
+
+*   **参数**: `page`, `page_size`。
+*   **响应**: `words` 列表和 `total` 总数。
+
+### 3.3 获取/保存学习进度
+`GET /wordbooks/:type/progress`
+`POST /wordbooks/progress`
+*   **认证**: Required
+*   **请求 (POST)**: `current_index`, `last_word_id`, `total_words`。
+
+### 3.4 导入单词到生词本
+`POST /wordbooks/:wordbook_id/import`
+*   **认证**: Required
+*   **请求**: `quality` ("fuzzy" | "forget")。
+
+---
+
+## 4. 生词本模块 (Vocabulary)
+
+核心复习功能，基于 Anki 类算法。
+
+### 4.1 获取生词列表
+`GET /vocabulary`
+*   **认证**: Required
+*   **参数**: `keyword`, `is_starred`, `limit`, `offset`。
+
+### 4.2 添加生词
+`POST /vocabulary`
+*   **认证**: Required
+*   **请求**: `content`, `meaning`, `source`。
+
+### 4.3 提交复习结果
+`POST /vocabulary/:id/review`
+*   **认证**: Required
+*   **请求**: `quality` (0-5)。
+*   **响应**: `points_earned` (获得积分)。
+
+### 4.4 获取今日待复习
+`GET /vocabulary/review/today`
+*   **认证**: Required
+
+---
+
+## 5. 听写练习模块 (Dictation)
+
+### 5.1 保存听写记录
+`POST /dictation/record`
+*   **认证**: Optional
+*   **请求**: `article_id`, `user_answer`, `is_correct`, `score`。
+
+### 5.2 获取听写统计
+`GET /dictation/statistics/:article_id`
+
+---
+
+## 6. 阅读进度模块 (Reading Progress)
+
+### 6.1 保存阅读进度
+`POST /reading-progress`
+*   **认证**: Required
+*   **请求**: `article_id`, `current_time` (秒), `duration`。
+
+### 6.2 快速保存进度 (高频)
+`POST /reading-progress/quick`
+*   **功能**: 轻量级接口，用于播放时每隔几秒上报一次进度，不返回复杂数据。
+
+### 6.3 获取阅读历史
+`GET /reading-progress/history`
+
+### 6.4 获取最后阅读的文章
+`GET /reading-progress/last`
+
+### 6.5 获取阅读统计
+`GET /reading-progress/stats`
+*   **响应**: `total_reading_time`, `total_articles`, `completed_count`。
+
+---
+
+## 7. 积分与排行模块 (Points & Ranking)
+
+### 7.1 每日签到
+`POST /check-in`
+*   **认证**: Required
+
+### 7.2 获取积分记录
+`GET /points/records`
+
+### 7.3 获取积分统计
+`GET /points/statistics`
+
+### 7.4 奖励阅读积分
+`POST /points/award/read`
+*   **认证**: Required
+*   **请求**: `article_id`, `read_duration`。
+
+### 7.5 获取排行榜
+`GET /ranking/global` (全站排名)
+`GET /ranking/me` (我的排名)
+
+### 7.6 称号管理
+`GET /titles/me` (我的称号)
+`GET /titles/equipped` (当前佩戴)
+`POST /titles/equip` (佩戴称号)
+
+---
+
+## 8. 学习时长模块 (Duration)
+
+### 8.1 同步阅读时长
+`POST /duration/sync`
+*   **认证**: Required
+*   **功能**: 将前端累计的阅读时长同步到后端数据库。
+*   **请求**: `total_reading_seconds`。
+
+---
+
+## 9. 其他模块 (Others)
+
+### 9.1 提交反馈
+`POST /feedback`
+
+### 9.2 获取分类
+`GET /categories`
+
+---
+
+## 💡 前端核心逻辑说明
+
+### 1. 阅读高亮跟随 (Audio Highlighting)
+
+前端实现了精细的音频与文本同步高亮，核心逻辑如下：
+
+1.  **数据源**: 调用 `GET /articles/:id/timeline` 获取时间轴数据。数据包含每个句子的 `time_begin` (开始时间ms) 和 `text_begin` (字符偏移量)。
+2.  **监听**: 监听音频播放器的 `timeupdate` 事件。
+3.  **定位**:
+    *   **优先使用字符偏移 (Precise Mode)**: 根据时间轴中的 `text_begin` 和 `text_end`，使用 `TreeWalker` 遍历 DOM 文本节点，精确找到对应的文本段落。这种方式不受 HTML 标签结构影响，最为准确。
+    *   **降级方案 (Fuzzy Mode)**: 如果没有字符偏移量，则对比文本内容，使用模糊匹配找到对应的段落。
+4.  **渲染**: 给匹配到的 DOM 元素添加 `highlight` 类（样式：背景色/边框）。同时插入一个指示箭头 `▶`。
+5.  **自动滚动**: 计算高亮元素在页面中的位置，自动滚动视口，使其保持在屏幕上方约 1/3 处。当用户手动滚动时，自动暂停跟随功能，几秒后或切换句子时自动恢复。
+
+### 2. 单词书复习算法
+
+1.  **队列获取**: 每天调用 `GET /vocabulary/review/today` 获取待复习单词。
+2.  **展示**:
+    *   **卡片模式**: 显示单词，点击翻转看释义。
+    *   **默写模式**: 播放发音，用户输入拼写。
+3.  **提交**: 用户选择 "认识/模糊/忘记" 后，调用 `POST /vocabulary/:id/review`。后端会根据 SM-2 算法更新该单词的 `next_review_at`。
+
+### 3. OSS 图片处理
+
+后端返回的 `avatar` 或 `cover_url` 通常是阿里云 OSS 地址。
+*   **私有 Bucket**: 后端会在返回 URL 前自动生成带签名的临时 URL (`?OSSAccessKeyId=...`)，有效期通常为 24 小时。
+*   **公共 Bucket**: 直接返回 URL，前端可直接访问。
+*   **兜底**: 前端组件应实现 `onError` 处理，当图片加载失败时显示默认占位图。
+
+
+
+# 📊 VoicePaper API 接口文档
+
+**文档版本**: 1.0.0
+**生成日期**: 2025-12-23
+**基础 URL**:
+- 开发环境: `http://localhost:8080/api/v1`
+- 生产环境: `https://voicepaper.online/api/v1`
+
+---
+
+## 📋 目录
+
+1.  **[认证模块 (Auth)](#1-认证模块-auth)**
+2.  **[文章模块 (Articles)](#2-文章模块-articles)**
+3.  **[单词书模块 (Wordbooks)](#3-单词书模块-wordbooks)**
+4.  **[生词本模块 (Vocabulary)](#4-生词本模块-vocabulary)**
+5.  **[听写练习模块 (Dictation)](#5-听写练习模块-dictation)**
+6.  **[阅读进度模块 (Reading Progress)](#6-阅读进度模块-reading-progress)**
+7.  **[积分与排行模块 (Points & Ranking)](#7-积分与排行模块-points--ranking)**
+8.  **[其他模块 (Others)](#8-其他模块-others)**
+
+---
+
+## 1. 认证模块 (Auth)
+
+该模块处理用户注册、登录、个人信息管理。
+
+### 1.1 邮箱验证码登录/注册
+`POST /auth/email/login`
+
+*   **功能**: 用户通过邮箱验证码登录。如果邮箱不存在，会自动注册（或提示注册）。通常是主要的登录方式。
+*   **请求参数 (JSON)**:
+    *   `email` (string, required): 用户邮箱地址。
+    *   `code` (string, required): 收到的验证码。
+*   **响应 (JSON)**:
+    ```json
+    {
+      "token": "eyJhbGciOiJIUzI1...", // JWT 认证 Token
+      "user": {
+        "id": 1,
+        "email": "user@example.com",
+        "nickname": "VoicePaper User"
+      },
+      "message": "登录成功"
+    }
+    ```
+
+### 1.2 发送邮箱验证码
+`POST /auth/email/send`
+
+*   **功能**: 向指定邮箱发送验证码。
+*   **请求参数 (JSON)**:
+    *   `email` (string, required): 目标邮箱。
+    *   `purpose` (string, optional): 用途，默认为 `login`。
+*   **响应**:
+    ```json
+    {
+      "message": "验证码发送成功"
+    }
+    ```
+
+### 1.3 密码登录
+`POST /auth/password/login`
+
+*   **功能**: 用户通过密码登录（管理员或老用户）。
+*   **请求参数 (JSON)**:
+    *   `email` (string, required): 邮箱。
+    *   `password` (string, required): 密码。
+*   **响应**: 同 1.1。
+
+### 1.4 获取当前用户信息
+`GET /auth/me`
+*   **认证**: Required (`Authorization: Bearer <token>`)
+*   **功能**: 获取当前登录用户的详细信息。通常在应用启动时调用以恢复会话。
+*   **响应**:
+    ```json
+    {
+      "user": {
+        "id": 1,
+        "nickname": "User",
+        "email": "user@example.com",
+        "avatar": "https://oss...", // 头像URL
+        "level": 3,                 // 用户等级
+        "points": 1250,             // 当前积分
+        "equipped_title": {         // 当前佩戴的称号
+           "name": "进士",
+           "rarity": "rare"
+        }
+      }
+    }
+    ```
+
+### 1.5 更新个人资料
+`PUT /auth/profile`
+*   **认证**: Required
+*   **功能**: 修改用户昵称、头像或简介。
+*   **请求参数 (JSON)**:
+    *   `nickname` (string, optional): 新昵称。
+    *   `avatar` (string, optional): 新头像 URL。
+    *   `bio` (string, optional): 个人简介。
+*   **响应**: 更新后的 `user` 对象。
+
+### 1.6 上传头像
+`POST /auth/avatar/upload`
+*   **认证**: Required
+*   **功能**: 上传图片文件作为头像。
+*   **请求参数 (FormData)**:
+    *   `avatar` (file): 图片文件。
+*   **响应**:
+    *   `avatar_url` (string): 上传后的图片地址（OSS 地址）。
+    *   `user` (object): 更新后的用户信息。
+
+---
+
+## 2. 文章模块 (Articles)
+
+该模块提供精读文章的内容、音频和时间轴数据。
+
+### 2.1 获取文章列表
+`GET /articles`
+
+*   **功能**: 获取所有可用的文章列表，用于首页展示。
+*   **响应**: 文章对象数组。
+    ```json
+    [
+      {
+        "id": 101,
+        "title": "The Future of AI",
+        "category_id": 1,
+        "publish_date": "2025-12-20",
+        "is_daily": true,
+        "online": true
+      }
+    ]
+    ```
+
+### 2.2 获取文章详情
+`GET /articles/:id`
+
+*   **功能**: 获取单篇文章的完整内容，包括正文、音频链接、时间轴链接。
+*   **参数**: `id` (path): 文章 ID。
+*   **响应**:
+    ```json
+    {
+      "id": 101,
+      "title": "The Future of AI",
+      "content": "# Markdown Content...", // 文章正文
+      "audio_url": "https://oss...",      // 配套音频地址
+      "timeline_url": "https://oss...",   // 时间轴数据地址
+      "words": [],                        // 重点单词列表
+      "sentences": []                     // 句子列表
+    }
+    ```
+
+### 2.3 获取文章时间轴
+`GET /articles/:id/timeline`
+
+*   **功能**: 获取文章的时间轴数据，用于音频播放时的高亮同步。
+*   **响应**: JSON 对象，包含每个句子/单词的 `start_time` (ms) 和 `end_time` (ms)。
+
+### 2.4 获取文章重点单词
+`GET /articles/:id/words`
+
+*   **功能**: 获取该文章标记的重点词汇。
+*   **响应**:
+    ```json
+    [
+      {
+        "text": "artificial",
+        "phonetic": "/ˌɑːrtɪˈfɪʃl/",
+        "meaning": "adj. 人造的；仿造的",
+        "is_key_word": true
+      }
+    ]
+    ```
+
+---
+
+## 3. 单词书模块 (Wordbooks)
+
+该模块管理各类考试单词书（CET4, TOEFL 等）。
+
+### 3.1 获取单词书列表
+`GET /wordbooks`
+
+*   **功能**: 获取所有上架的单词书。
+*   **响应**:
+    ```json
+    [
+      {
+        "type": "cet4",
+        "name": "大学英语四级",
+        "description": "CET-4 核心词汇...",
+        "cover_url": "https://oss...", // 封面图
+        "word_count": 4500,
+        "study_count": 12580,
+        "hotness": 5000
+      }
+    ]
+    ```
+
+### 3.2 获取单词书内容
+`GET /wordbooks/:type/words`
+
+*   **功能**: 分页获取某本单词书里的单词列表。
+*   **参数**:
+    *   `type` (path): 单词书标识（如 `cet4`）。
+    *   `page` (query): 页码，默认 1。
+    *   `page_size` (query): 每页数量，默认 20。
+*   **响应**:
+    *   `words` (array): 单词详情列表（包含例句、词根、JSON 格式的 `examples_json` 等）。
+    *   `total` (int): 总数。
+
+### 3.3 获取/保存学习进度
+`GET /wordbooks/:type/progress`
+`POST /wordbooks/progress`
+*   **认证**: Required
+*   **功能**: 记录用户在某本单词书学到了哪里。
+*   **请求 (POST)**:
+    ```json
+    {
+      "word_type": "cet4",
+      "current_index": 15,
+      "last_word_id": 1024,
+      "total_words": 4500
+    }
+    ```
+
+### 3.4 导入单词到生词本
+`POST /wordbooks/:wordbook_id/import`
+*   **认证**: Required
+*   **功能**: 将单词书里的某个词标记为"模糊"或"不认识"，加入到用户的生词本复习队列。
+*   **请求**:
+    *   `quality` ("fuzzy" | "forget")
+
+---
+
+## 4. 生词本模块 (Vocabulary)
+
+该模块是核心复习功能，基于 Anki 类算法。
+
+### 4.1 获取生词列表
+`GET /vocabulary`
+*   **认证**: Required
+*   **功能**: 分页获取用户的生词本。
+*   **参数**: `keyword` (搜索), `is_starred` (bool), `limit`, `offset`。
+
+### 4.2 添加生词
+`POST /vocabulary`
+*   **认证**: Required
+*   **功能**: 手动或从文章中添加一个生词。
+*   **请求**:
+    ```json
+    {
+      "content": "epiphany",
+      "meaning": "n. 顿悟",
+      "source": "manual" // 或 "article"
+    }
+    ```
+
+### 4.3 提交复习结果
+`POST /vocabulary/:id/review`
+*   **认证**: Required
+*   **功能**: 用户完成一次单词复习，后端根据算法更新下次复习时间。
+*   **请求**:
+    *   `quality` (int): 掌握程度评分 (0-5)。
+*   **响应**:
+    *   `points_earned` (int): 本次复习获得的积分。
+
+### 4.4 获取今日待复习
+`GET /vocabulary/review/today`
+*   **认证**: Required
+*   **功能**: 获取截止到当前时间需要复习的单词列表。
+
+---
+
+## 5. 听写练习模块 (Dictation)
+
+### 5.1 保存听写记录
+`POST /dictation/record`
+*   **认证**: Optional (登录可获积分)
+*   **功能**: 提交用户对某个词或句子的听写结果。
+*   **请求**: `article_id`, `user_answer`, `is_correct`, `score`。
+
+### 5.2 获取听写统计
+`GET /dictation/statistics/:article_id`
+*   **功能**: 查看用户在某篇文章的听写正确率和完成度。
+
+---
+
+## 6. 阅读进度模块 (Reading Progress)
+
+### 6.1 保存阅读进度
+`POST /reading-progress`
+*   **认证**: Required
+*   **功能**: 记录文章阅读进度。
+*   **请求**:
+    ```json
+    {
+      "article_id": 101,
+      "current_time": 120, // 秒
+      "duration": 300      // 总时长
+    }
+    ```
+
+### 6.2 获取阅读历史
+`GET /reading-progress/history`
+*   **功能**: 获取用户最近阅读过的文章列表。
+
+---
+
+## 7. 积分与排行模块 (Points & Ranking)
+
+### 7.1 每日签到
+`POST /check-in`
+*   **认证**: Required
+*   **功能**: 每日签到，获取积分。
+
+### 7.2 获取排行榜
+`GET /ranking/global`
+*   **功能**: 获取全站用户积分排行榜。
+
+### 7.3 称号管理
+`GET /titles/me` (我的所有称号)
+`GET /titles/equipped` (当前佩戴的)
+*   **功能**: 获取用户已获得的称号和当前佩戴的称号。
+
+---
+
+## 8. 其他模块 (Others)
+
+### 8.1 提交反馈
+`POST /feedback`
+*   **功能**: 用户提交 Bug 或建议。
+*   **请求**: `description`, `type`, `contact`。
+
+### 8.2 获取分类
+`GET /categories`
+*   **功能**: 获取文章分类列表（如"科技"、"生活"）。
+
+---
+
+### 💡 客户端开发提示
+
+1.  **OSS 图片**: 后端返回的 `avatar` 或 `cover_url` 通常是阿里云 OSS 地址。
+2.  **错误处理**: 遇到 `401 Unauthorized` 响应时，应跳转至登录页面。
+3.  **开发环境**: `http://localhost:8080`
+4.  **生产环境**: `https://voicepaper.online`
